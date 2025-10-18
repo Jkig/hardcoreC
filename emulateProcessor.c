@@ -29,35 +29,6 @@ void hardfault_vec() {
 // the rest are as follows, not to crazy
 
 
-/*  Core Instructions I'll need (IDK all the instructions that exist, but this should ge tme starts)
- * add
- * sub
- * mult
- * div
- * lsh
- * rsh
-// Equality, answer in status register (or does it go to results register?)
- * los
- * leq
- * mos
- * meq
-
- * ext// exit program // An ISA doesn't need to include this, but it came to mind to make it easier to emulate,
- *      and as thius is for fun/klearning, not production, I'll use it to see what happens, maybe this will be fun
-
-    Other notes
- * I'll need to have either numbers, or addresses , or annother register, as a value in a register,
- *   how to know? I need a flag or 2here
-*/
-
-// for now, I have 32 bits for instruction, I wouldn't ever need that many instuctions, so I can pack some other data
-// this is where I want to put the info about the type of value in the register
-
-// byte0 byte1 byte2 byte3
-// byte0: Instruction first byte
-// byre1: Instruction sedcond byte
-// byte2: first nibble (two bits) represent what type of value (raw number (0), address in ram (1), register number (2)) first register holds,
-// byre3: I don't need this yet, maybe extend it?
 
 int add(int src, int dst, int val) {
     return;
@@ -75,6 +46,9 @@ void *instruciton_table[add];// list of these funciton pointers
 
 void executeInterrupts() {
     // execute any pendinge interrupts, and execute it, leftmost will be highest priority
+    // I think really the only interrupt will be "Trap to the OS to printf()"
+    // I'll sprintf into a buffer, then use a single instruction pointing 
+    // these are not the same vectors? IDK what I'll do yet
     for (unsigned char voffset = 0, voffset<32;voffset++) {
         while (interrupt_signals & (1 << voffset) != 0) // its the interrupts job to disable itself
             vtable[voffset]();
@@ -128,7 +102,7 @@ int main(void) {
  *      (this step could easilly be one, I should be able to go from )
  * to limit the scope, I could just allow a single file
 
- * and, as a fun, funny, joke, I can write the compiler/ assember in python. parse it, etc
+ * and, as a fun, funny, joke, I can write the compiler/ assember in python. parse it, etc (I forgot about this one XD)
 */
 
 
