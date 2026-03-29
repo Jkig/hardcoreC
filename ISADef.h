@@ -2,19 +2,29 @@
 // This will be an enum for the isntructions, which can get packet with other things to fit in the program counter, and also have associated string so I can compile to text assembly, then I'll pack that
 
 
-/*  Core Instructions I'll need (IDK all the instructions that exist, but this should ge tme starts)
- * add
- * sub
- * mult
- * div
- * lsh
- * rsh
-// Equality, answer in status register (or does it go to results register?) (maybe just one compare, 0 is equal, -1 is left is less, 1 is more)
- * los
- * leq
- * mos
- * meq
+typedef uint64_t MyISA;
+enum {
+    ADD = 1ULL,
+    SUB = 2ULL,
+    MUL = 3ULL,
+    DIV = 4ULL,
+    LSH = 5ULL,
+    RSH = 6ULL,
+    LOAD = 7ULL,
+    STORE = 8ULL,
+    JMP = 9ULL,
+    CMP = 10ULL,
+    ISA_COUNT,
+};
 
+
+typedef uint64_t MyStatus;
+enum {
+   EQUAL = 0ULL,
+   LESS = 1ULL,
+   GREATER = 2ULL
+};
+/*  Core Instructions I'll need (IDK all the instructions that exist, but this should ge tme starts)
  * ext// exit program // An ISA doesn't need to include this, but it came to mind to make it easier to emulate,
  *      and as thius is for fun/klearning, not production, I'll use it to see what happens, maybe this will be fun
 
@@ -23,7 +33,7 @@
  *   how to know? I need a flag or 2here
 */
 
-// for now, I have 32 bits for instruction, I wouldn't ever need that many instuctions, so I can pack some other data
+// for now, I have 64 bits for instruction, I wouldn't ever need that many instuctions, so I can pack some other data
 // this is where I want to put the info about the type of value in the register
 
 // byte0 byte1 byte2 byte3

@@ -11,3 +11,9 @@ To keep it simple:
 * Maybe all definitions are at the start of the function?
 * Basically no optimisation? Its not production on purpose
 * Pass in file name of my compiled binary to a file into the emulator….
+
+Remember, the kernel doesn’t exist when we are this deep
+
+## To consider:
+- there isn't much point in doing the assembpler and Compiler in C. For production obviously do this, but for my simple test programs, python might be fun/ convenient?
+- some things owuld be easier in C, I definitely want to have emulateProcessor in c, maybe some basic text processing in python? IDK
