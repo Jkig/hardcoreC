@@ -2,11 +2,29 @@
 
 0x00000000: Initial stack pointer
 
-0x00000001: Start of the vector table (reset vector is here)
-0x0000001F: End of the vector table (last entry)
+0x00000008: Start of the vector table (reset vector is here)
+0x00000200: End of the vector table (last entry)
 
-0x00000020: Start of memoery after the vector table (I think I'll put intitialized statics and globals, then uninitialized statics and globals (I know in the real world, these are seperate because we don't want to allocate space in the binary, but its not important for what I'm doing, so uninitialized will effectively be the same as initialzied, but initialized to 0))
+0x00000208: Start of memory after the vector table
 
+Next secitons are all variable in size. 
+
+I'll have the stack grow down (from the top of the )
+
+# I do have to decide how much memory I can alllow for this, should be fine, I'll just take up like half what gcc gives me for emulate processor.c, leaving the rest for the processor's operations
+
+This is really making me understand the feelling of the old timers, that instructions and data is all the same thing, and the runtime altering of code seems more resonable from here (I know its not, ofc, thats insane (these days, with cheap hardware))
+
+
+- A note on the vector table, I definitely don't need this many, honestly I only care about the rest vecotor for now, I'd be very satisfied if I could run a program that takes a # n as input from the consol, and calculates the nth fibinacci number and prints it out. That's really cool, I don't need to get an OS on here, or emulate other hardware I/O. Serial to a terminal should be good, but might as well give myself the felxibility
+
+
+## What I need to store somewhere:
+- text (code)
+- intitialized statics and globals
+- uninitialized statics and globals
+- the stack
+- the heap
 
 After all the space the statics and globals need, I start putting funciton definitions
 

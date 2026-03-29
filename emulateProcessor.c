@@ -1,47 +1,23 @@
 // this isn't too bad
-// 32 bit architecture
+//64 bit architecture
+#include <stdint.h>
+#include "emulateProcessor.h"
+#include "ISADef.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 // I won't emulate a real processor, I'll only get close enought to really solidify the idea
 
-int program_state = 0;// 0 is not started (or finished successfully), 1 is running, anything else is some sort of error or other return value
-int program_return = 0;
 
+// I 'll only have 2 real syscalls, in/out, this program can catch them, in and out through the console that I'm actually using 
 
-typedef struct _registers {int pc, int sp, int r1, int r2, int r3, int res, int status};
-typedef struct _registers registers;
-unsigned int interrupt_signals;  // I have 32 possible interrupts
+uint64_t program_state = 0;// 0 is not started (or finished successfully), 1 is running, anything else is some sort of error or other return value
+uint64_t program_return = 0;
 
-// interrupts:
-// interrupt 0
-void reset_vec() {
-    program_state = 1;
-}
-
-// interrupt 1
-void NMI_vec() {
-    
-}
-
-// interrupt 2
-void hardfault_vec() {
-    
-}
-// the rest are as follows, not to crazy
-
-
-
-int add(int src, int dst, int val) {
-    return;
-}
-
-
-
-
-
-void *vtable[reset_vec, NMI_vec, hardfault_vec];// list of these funciton pointers
-void *instruciton_table[add];// list of these funciton pointers
-
-
+// GLOBALS:
+_registers registers;
+unsigned uint64_t interrupt_signals;    // I have 64 possible interrupts
+uint8_t ram[RAM_SIZE];
 
 
 void executeInterrupts() {
@@ -49,41 +25,70 @@ void executeInterrupts() {
     // I think really the only interrupt will be "Trap to the OS to printf()"
     // I'll sprintf into a buffer, then use a single instruction pointing 
     // these are not the same vectors? IDK what I'll do yet
-    for (unsigned char voffset = 0, voffset<32;voffset++) {
+    // actually the registers on the stack, I don't really care about interrupts yet
+    for (unsigned char voffset = 0, voffset<64;voffset++) {
         while (interrupt_signals & (1 << voffset) != 0) // its the interrupts job to disable itself
             vtable[voffset]();
     }
 }
 
-void execute(_registers curr_registers) {
+void execute() {
     // Impliment all the instructuions here, map them to fucncitons in c that do things
     // maps this instruction to a c function i'll define
 
 
     // wait until I have access to all the values in the registers I'll need for this
     // I can, so I'll spare a few registsers (i'm making them up lol) to hold intermediates
-    instruciton_table[curr_registers.pc](curr_registers);// I'm pssing here and there, globals everyone has, because who cares, I don't think I'll ever build this
+    instruciton_table[curr_registers.pc]();// I'm pssing here and there, globals everyone has, because who cares, I don't think I'll ever build this
 }
 
-int main(void) {
-    typedef struct _registers saved_registers;
-    
-    reset_vec();
+// Function to load file into RAM
+size_t load_file_to_ram(const char *filename) {
+    FILE *file = fopen(filename, "rb");
+    if (!file) {
+        perror("fopen");
+        return 0;
+    }
+
+    // Read up to RAM_SIZE bytes
+    size_t bytes_read = fread(ram, 1, RAM_SIZE, file);
+
+    if (ferror(file)) {
+        perror("fread");
+        fclose(file);
+        return 0;
+    }
+
+    fclose(file);
+    return bytes_read;
+}
+
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <filename>\nProvide the name of a binary file", argv[0]);
+        return 1;
+    }
+
+    size_t loaded = load_file_to_ram(argv[1]);
+    if (loaded == 0) {
+        fprintf(stderr, "Failed to load file into RAM\nEmpty binary file or read error\n");
+        return 1;
+    }
+
+    registers.sp = *(uint64_t *)(&ram[0]);
+    registers.pc = *(uint64_t *)(&ram[8]);
 
     while (1) {
         // poll the interrupts
         // do them one after the other
         if (interrupt_signals != 0) {
-            saved_registers = registers;// make sure copying right
-
             while (interrupt_signals != 0) {
                 executeInterrupt();// call the right interrupt handler
             }
-            registers = saved_registers;
         }
 
         // do the next instrucition
-        execute(registers.pc);
+        execute();// I/O is a bit special, but I just put it in here
         if (program_state != 1)
             break;
 
