@@ -9,7 +9,8 @@
 // I won't emulate a real processor, I'll only get close enought to really solidify the idea
 
 
-// I 'll only have 2 real syscalls, in/out, this program can catch them, in and out through the console that I'm actually using 
+// I'll only have 2 real syscalls, in/out, this program can catch them, in and out through the console that I'm actually using
+
 
 uint64_t program_state = 0;// 0 is not started (or finished successfully), 1 is running, anything else is some sort of error or other return value
 uint64_t program_return = 0;
@@ -117,10 +118,8 @@ int main(int argc, char *argv[]) {
 
     The current in contrast:
  * Wrote my own ISA, as well as a compiler for it in python, an emulator for it in C, and tested that the code resulted in the same
- * results as the exact same C source code, compiled with gcc...
+ * Program's outputs should have be the same as the exact same C source code compiled with gcc...
  * in either case, just print the results, impliment a leetcode medium, and some good test cases..
-
- * my one question is how much is this to impliment, I can use the normal c
 
  * scope out this project, write it up, and don't do it, but if I ever give up on being rich, and hate my life, I could do this
  * IDK how bad it is, what instuctions do I need? probs not that bad...

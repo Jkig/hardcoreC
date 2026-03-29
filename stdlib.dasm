@@ -6,7 +6,6 @@
 _start:
     ; setup registers from binary
     
-
     run main;
     put value somewhere
-    MOV STATUS_REG, terminate_program; 
+    MOV STATUS_REG, terminate_program;

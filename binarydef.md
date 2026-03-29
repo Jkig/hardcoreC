@@ -40,3 +40,7 @@ Theoredically, I'd be using the heap, it shouldn't be abolutely crazy to impleme
 * TODO: how to pass args to main? For an easy solution, I could set aside a fixed hunk of space before the stack for any passed parameters.
 * I'm not trying to be to "embedded brained" so remember that. Interrupts don't matter too much.
 
+# Reference manual (lol)
+- LSB
+- big endian?/ little endian? think about what I want to target, I is implementation defined, and lots change, 
+  - looks like little endian is most common on arm
