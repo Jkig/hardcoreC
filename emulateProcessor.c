@@ -65,9 +65,19 @@ size_t load_file_to_ram(const char *filename) {
 }
 
 int main(int argc, char *argv[]) {
-    if (argc != 2) {
+    if (argc < 2) {
         fprintf(stderr, "Usage: %s <filename>\nProvide the name of a binary file", argv[0]);
         return 1;
+    }
+    bool debug_mode = false;
+    if (argc > 2) {
+        if (strcmp(argv[2], "--debug") == 0) {
+            debug_mode = true;
+        } else {
+            fprintf(stderr, "Unknown option: %s\n", argv[2]);
+            fprintf(stderr, "Usage: %s <filename> [--debug]\nProvide the name of a binary file and optionally enable debug mode", argv[0]);
+            return 1;
+        }
     }
 
     size_t loaded = load_file_to_ram(argv[1]);
@@ -80,6 +90,33 @@ int main(int argc, char *argv[]) {
     registers.pc = *(uint64_t *)(&ram[8]);
 
     while (1) {
+        if (debug_mode) {
+            // TODO: latere I'll implement a lot larger debug mode, but for now just step, print registers, and 
+            printf(".");
+            char cmd = fgetchar();
+            switch(cmd) {
+                case 'P':
+                    // Print the contents of all registers
+                    printf("PC: %016lx, SP: %016lx, r1-r4: %016lx, %016lx, %016lx, %016lx\n", registers.pc, registers.sp, registers.r1, registers.r2, registers.r3, registers.r4);
+                    break;
+                case 'p':
+                    // read address from user and print the contents of that address in RAM
+                    uint64_t addr;
+                    printf("Enter address to print: ");
+                    scanf("%lx", &addr);
+                    printf("Contents at address %016lx: %016lx\n", addr, *(uint64_t *)(&ram[addr]));
+                    break;
+                case 's':
+                    // Step through the next instruction
+                    break;
+                case 'r':
+                    // print register states
+                    break;
+                default:
+                    break;
+                printf("\n");
+        }
+
         // poll the interrupts
         // do them one after the other
         if (interrupt_signals != 0) {
