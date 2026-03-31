@@ -1,1 +1,1 @@
-// Goes from .Dasm (Derek's assembly) file to a binary file, which is executable by my emulated Processor
+// Goes from .sasm (Derek's assembly) file to a binary file, which is executable by my emulated Processor

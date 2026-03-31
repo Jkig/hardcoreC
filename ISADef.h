@@ -1,5 +1,7 @@
 // Kinda based on my vibe of ARM ASM, but really reduced, and soimplified. Not optimized, the real world doesn't work like this.
 // This will be an enum for the isntructions, which can get packet with other things to fit in the program counter, and also have associated string so I can compile to text assembly, then I'll pack that
+#ifndef ISADEFS_H
+#define ISADEFS_H
 
 
 typedef uint64_t MyISA;
@@ -42,3 +44,5 @@ enum {
 // byte2: first nibble (two bits) represent what type of value (raw number (0), address in ram (1), register number (2)) first register holds,
 // byre3: I don't need this yet, maybe extend it?
 
+
+#endif // ISADEFS_H

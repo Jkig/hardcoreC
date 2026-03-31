@@ -1,24 +1,34 @@
 // this isn't too bad
 //64 bit architecture
-#include <stdint.h>
 #include "emulateProcessor.h"
+#include "implementInstructions.h"
 #include "ISADef.h"
-#include <stdio.h>
+#include <stdbool.h>
 #include <stdlib.h>
+#include <stdint.h>
+#include <stdio.h>
 
 // I won't emulate a real processor, I'll only get close enought to really solidify the idea
 
 
 // I'll only have 2 real syscalls, in/out, this program can catch them, in and out through the console that I'm actually using
+// Could trigger interrupts manually from annother thread later
 
 
-uint64_t program_state = 0;// 0 is not started (or finished successfully), 1 is running, anything else is some sort of error or other return value
-uint64_t program_return = 0;
+
+// External globals
+extern instruction instruciton_table[ISA_COUNT];
+
+
+
 
 // GLOBALS:
 _registers registers;
-unsigned uint64_t interrupt_signals;    // I have 64 possible interrupts
+volatile uint64_t interrupt_signals;    // I have 64 possible interrupts
 uint8_t ram[RAM_SIZE];
+uint64_t *vtable_start = &ram[8];
+uint64_t program_state = 0;// 0 is not started (or finished successfully), 1 is running, anything else is some sort of error or other return value
+uint64_t program_return = 0;
 
 
 void executeInterrupts() {
@@ -27,10 +37,18 @@ void executeInterrupts() {
     // I'll sprintf into a buffer, then use a single instruction pointing 
     // these are not the same vectors? IDK what I'll do yet
     // actually the registers on the stack, I don't really care about interrupts yet
-    for (unsigned char voffset = 0, voffset<64;voffset++) {
-        while (interrupt_signals & (1 << voffset) != 0) // its the interrupts job to disable itself
-            vtable[voffset]();
+
+    // Its a bare metal program, so it gets to define the interrupts, but I have to do the work to context switch here (like hardware would)
+    
+    // Set up for the context switch, I don't have to do it in .dsm, "the hardware does it"
+    // I should also implement a software interrupt instruction to go here! its not too hard
+
+    for (uint8_t voffset=0; voffset<64;voffset++) {
+        while (interrupt_signals & (1 << voffset) != 0) // its the interrupts job to disable itself?
+            registers.pc = vtable_start[voffset];  
     }
+
+    // Switch context back
 }
 
 void execute() {
@@ -40,7 +58,7 @@ void execute() {
 
     // wait until I have access to all the values in the registers I'll need for this
     // I can, so I'll spare a few registsers (i'm making them up lol) to hold intermediates
-    instruciton_table[curr_registers.pc]();// I'm pssing here and there, globals everyone has, because who cares, I don't think I'll ever build this
+    instruciton_table[registers.pc]();// I'm pssing here and there, globals everyone has, because who cares, I don't think I'll ever build this
 }
 
 // Function to load file into RAM
@@ -119,10 +137,8 @@ int main(int argc, char *argv[]) {
 
         // poll the interrupts
         // do them one after the other
-        if (interrupt_signals != 0) {
-            while (interrupt_signals != 0) {
-                executeInterrupt();// call the right interrupt handler
-            }
+        while (interrupt_signals != 0) {
+            executeInterrupt();// call the right interrupt handler
         }
 
         // do the next instrucition
