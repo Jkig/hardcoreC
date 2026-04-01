@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include "../emulateProcessor.h"
 
+// This file should help me build binaries to run on the processor manually before I can trust the assembler
+
 
 int main(void) {
     uint8_t data[RAM_SIZE] = {0};

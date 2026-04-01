@@ -26,6 +26,14 @@ enum {
    LESS = 1ULL,
    GREATER = 2ULL
 };
+
+
+typedef uint64_t ProgramState;
+enum {
+   NOT_STARTED = 0ULL,
+   RUNNING = 1ULL,
+   FAILED = 2ULL
+};
 /*  Core Instructions I'll need (IDK all the instructions that exist, but this should ge tme starts)
  * ext// exit program // An ISA doesn't need to include this, but it came to mind to make it easier to emulate,
  *      and as thius is for fun/klearning, not production, I'll use it to see what happens, maybe this will be fun

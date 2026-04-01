@@ -3,6 +3,7 @@
 0x00000000: Initial stack pointer
 
 0x00000008: Start of the vector table (reset vector is here)
+...
 0x00000200: End of the vector table (last entry)
 
 0x00000208: Start of memory after the vector table

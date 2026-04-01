@@ -7,8 +7,8 @@
 #define RAM_SIZE (1024 * 1024)    // 1 mb of ram
 
 struct _registers {
-    uint64_t pc;
-    uint64_t sp;
+    uint64_t *pc;
+    uint64_t *sp;
     uint64_t r1;
     uint64_t r2;
     uint64_t r3;

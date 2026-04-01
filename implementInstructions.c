@@ -16,9 +16,8 @@ extern uint8_t ram[RAM_SIZE];
 
 
 // Globals
-instruction instruciton_table[ISA_COUNT] = {ADD, SUB, JMP};//{ADD, SUB, MUL, DIV, LSH, RSH, LOAD, STORE, JMP, CMP};// list of these funciton pointers
+instruction instruction_table[ISA_COUNT] = {ADD, SUB, JMP};//{ADD, SUB, MUL, DIV, LSH, RSH, LOAD, STORE, JMP, CMP};// list of these funciton pointers
 
-// They all just operate on the global register set, but some do have info with code, ex add r0 r1 #5
 
 
 void ADD() {
@@ -32,3 +31,14 @@ void SUB() {
 void JMP() {
     *pc = addr;
 }
+
+
+/* Notes
+ * They all just operate on the global register set, but some do have info with code, ex add r0 r1 #5
+
+ * How do we normally do this, having the instruction take a value or an address, or a register?
+ *   start with load and store, these are easy in my model
+ * I should also implement a software interrupt instruction to go here! its not too hard
+ * I'll sprintf into a buffer, then use a single instruction pointing, this can be a bit special
+ */
+
