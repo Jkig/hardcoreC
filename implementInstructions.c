@@ -17,7 +17,9 @@ extern uint8_t ram[RAM_SIZE];
 
 
 // Globals
-instruction instruction_table[ISA_COUNT] = {ADD, SUB, JMP};
+instruction instruction_table[ISA_COUNT] = {
+    // Just copy in from Opcode definition, and swap place by place with the op_INSTRUCTION_var
+};
 
 
 uint64_t *get_register_ptr(uint8_t reg_id) {
@@ -54,7 +56,11 @@ int get_register_id(uint64_t *reg_ptr) {
 }
 
 
-void NOOP() {
+////////////////////////////////////////////////////////////////////////////////
+// Operations:
+////////////////////////////////////////////////////////////////////////////////
+
+void op_NOOP() {
     registers.pc += sizeof(Instruction);
 }
 
@@ -108,13 +114,385 @@ void op_MOV_IMM_TO_HI() {
     registers.pc += sizeof(Instruction);
 }
 
+void op_ADD_SRC_SRC() {
+    InstructionBits raw_instruction = {0};
+    memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
+    uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
+    uint64_t *srcA = get_register_ptr(raw_instruction.ins.regB);
+    uint64_t *srcB = get_register_ptr(raw_instruction.ins.regC);
 
-void ADD() {
-    *res = src1 + src2;
+    if (!dst || !srcA  || !srcB) {
+        printf("%s, Failure, NULL register ", __func__);
+        registers.pc += sizeof(Instruction);
+        return;
+    }
+
+    *dst = 0;
+    *dst = *srcA + *srcB;
+    // TODO: Update Status register (beautiful side effects)
+    registers.pc += sizeof(Instruction);
 }
 
-void SUB() {
-    *res = src1 - src2;
+void op_ADD_SRC_IMM() {
+    InstructionBits raw_instruction = {0};
+    memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
+    uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
+    uint64_t *src = get_register_ptr(raw_instruction.ins.regB);
+    uint32_t val = raw_instruction.ins.val;
+
+    if (!dst || !src) {
+        printf("%s, Failure, NULL register ", __func__);
+        registers.pc += sizeof(Instruction);
+        return;
+    }
+
+    *dst = 0;
+    *dst = *src + val;
+    // TODO: Update Status register (beautiful side effects)
+    registers.pc += sizeof(Instruction);
+}
+
+
+void op_SUB_SRC_SRC() {
+    InstructionBits raw_instruction = {0};
+    memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
+    uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
+    uint64_t *srcA = get_register_ptr(raw_instruction.ins.regB);
+    uint64_t *srcB = get_register_ptr(raw_instruction.ins.regC);
+
+    if (!dst || !srcA  || !srcB) {
+        printf("%s, Failure, NULL register ", __func__);
+        registers.pc += sizeof(Instruction);
+        return;
+    }
+
+    *dst = 0;
+    *dst = *srcA - *srcB;
+    // TODO: Update Status register (beautiful side effects)
+    registers.pc += sizeof(Instruction);
+}
+
+void op_SUB_SRC_IMM() {
+    InstructionBits raw_instruction = {0};
+    memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
+    uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
+    uint64_t *src = get_register_ptr(raw_instruction.ins.regB);
+    uint32_t val = raw_instruction.ins.val;
+
+    if (!dst || !src) {
+        printf("%s, Failure, NULL register ", __func__);
+        registers.pc += sizeof(Instruction);
+        return;
+    }
+
+    *dst = 0;
+    *dst = *src - val;
+    // TODO: Update Status register (beautiful side effects)
+    registers.pc += sizeof(Instruction);
+}
+
+void op_MUL_SRC_SRC() {
+    InstructionBits raw_instruction = {0};
+    memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
+    uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
+    uint64_t *srcA = get_register_ptr(raw_instruction.ins.regB);
+    uint64_t *srcB = get_register_ptr(raw_instruction.ins.regC);
+
+    if (!dst || !srcA  || !srcB) {
+        printf("%s, Failure, NULL register ", __func__);
+        registers.pc += sizeof(Instruction);
+        return;
+    }
+
+    *dst = 0;
+    *dst = *srcA * *srcB;
+    // TODO: Update Status register (beautiful side effects)
+    registers.pc += sizeof(Instruction);
+}
+
+void op_MUL_SRC_IMM() {
+    InstructionBits raw_instruction = {0};
+    memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
+    uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
+    uint64_t *src = get_register_ptr(raw_instruction.ins.regB);
+    uint32_t val = raw_instruction.ins.val;
+
+    if (!dst || !src) {
+        printf("%s, Failure, NULL register ", __func__);
+        registers.pc += sizeof(Instruction);
+        return;
+    }
+
+    *dst = 0;
+    *dst = *src * val;
+    // TODO: Update Status register (beautiful side effects)
+    registers.pc += sizeof(Instruction);
+}
+
+void op_DIV_SRC_SRC() {
+    InstructionBits raw_instruction = {0};
+    memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
+    uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
+    uint64_t *srcA = get_register_ptr(raw_instruction.ins.regB);
+    uint64_t *srcB = get_register_ptr(raw_instruction.ins.regC);
+
+    if (!dst || !srcA  || !srcB) {
+        printf("%s, Failure, NULL register ", __func__);
+        registers.pc += sizeof(Instruction);
+        return;
+    }
+
+    *dst = 0;
+    *dst = *srcA / *srcB;
+    // TODO: Update Status register (beautiful side effects)
+    registers.pc += sizeof(Instruction);
+}
+
+void op_DIV_SRC_IMM() {
+    InstructionBits raw_instruction = {0};
+    memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
+    uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
+    uint64_t *src = get_register_ptr(raw_instruction.ins.regB);
+    uint32_t val = raw_instruction.ins.val;
+
+    if (!dst || !src) {
+        printf("%s, Failure, NULL register ", __func__);
+        registers.pc += sizeof(Instruction);
+        return;
+    }
+
+    *dst = 0;
+    *dst = *src / val;
+    // TODO: Update Status register (beautiful side effects)
+    registers.pc += sizeof(Instruction);
+}
+
+void op_MOD_SRC_SRC() {
+    InstructionBits raw_instruction = {0};
+    memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
+    uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
+    uint64_t *srcA = get_register_ptr(raw_instruction.ins.regB);
+    uint64_t *srcB = get_register_ptr(raw_instruction.ins.regC);
+
+    if (!dst || !srcA  || !srcB) {
+        printf("%s, Failure, NULL register ", __func__);
+        registers.pc += sizeof(Instruction);
+        return;
+    }
+
+    *dst = 0;
+    *dst = *srcA % *srcB;
+    // TODO: Update Status register (beautiful side effects)
+    registers.pc += sizeof(Instruction);
+}
+
+void op_MOD_SRC_IMM() {
+    InstructionBits raw_instruction = {0};
+    memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
+    uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
+    uint64_t *src = get_register_ptr(raw_instruction.ins.regB);
+    uint32_t val = raw_instruction.ins.val;
+
+    if (!dst || !src) {
+        printf("%s, Failure, NULL register ", __func__);
+        registers.pc += sizeof(Instruction);
+        return;
+    }
+
+    *dst = 0;
+    *dst = *src % val;
+    // TODO: Update Status register (beautiful side effects)
+    registers.pc += sizeof(Instruction);
+}
+
+void op_LSH_SRC_SRC() {
+    InstructionBits raw_instruction = {0};
+    memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
+    uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
+    uint64_t *srcA = get_register_ptr(raw_instruction.ins.regB);
+    uint64_t *srcB = get_register_ptr(raw_instruction.ins.regC);
+
+    if (!dst || !srcA  || !srcB) {
+        printf("%s, Failure, NULL register ", __func__);
+        registers.pc += sizeof(Instruction);
+        return;
+    }
+
+    *dst = 0;
+    *dst = *srcA << *srcB;
+    // TODO: Update Status register (beautiful side effects)
+    registers.pc += sizeof(Instruction);
+}
+
+void op_LSH_SRC_IMM() {
+    InstructionBits raw_instruction = {0};
+    memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
+    uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
+    uint64_t *src = get_register_ptr(raw_instruction.ins.regB);
+    uint32_t val = raw_instruction.ins.val;
+
+    if (!dst || !src) {
+        printf("%s, Failure, NULL register ", __func__);
+        registers.pc += sizeof(Instruction);
+        return;
+    }
+
+    *dst = 0;
+    *dst = *src << val;
+    // TODO: Update Status register (beautiful side effects)
+    registers.pc += sizeof(Instruction);
+}
+
+void op_RSH_SRC_SRC() {
+    InstructionBits raw_instruction = {0};
+    memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
+    uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
+    uint64_t *srcA = get_register_ptr(raw_instruction.ins.regB);
+    uint64_t *srcB = get_register_ptr(raw_instruction.ins.regC);
+
+    if (!dst || !srcA  || !srcB) {
+        printf("%s, Failure, NULL register ", __func__);
+        registers.pc += sizeof(Instruction);
+        return;
+    }
+
+    *dst = 0;
+    *dst = *srcA >> *srcB;
+    // TODO: Update Status register (beautiful side effects)
+    registers.pc += sizeof(Instruction);
+}
+
+void op_RSH_SRC_IMM() {
+    InstructionBits raw_instruction = {0};
+    memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
+    uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
+    uint64_t *src = get_register_ptr(raw_instruction.ins.regB);
+    uint32_t val = raw_instruction.ins.val;
+
+    if (!dst || !src) {
+        printf("%s, Failure, NULL register ", __func__);
+        registers.pc += sizeof(Instruction);
+        return;
+    }
+
+    *dst = 0;
+    *dst = *src >> val;
+    // TODO: Update Status register (beautiful side effects)
+    registers.pc += sizeof(Instruction);
+}
+
+void op_AND_SRC_SRC() {
+    InstructionBits raw_instruction = {0};
+    memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
+    uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
+    uint64_t *srcA = get_register_ptr(raw_instruction.ins.regB);
+    uint64_t *srcB = get_register_ptr(raw_instruction.ins.regC);
+
+    if (!dst || !srcA  || !srcB) {
+        printf("%s, Failure, NULL register ", __func__);
+        registers.pc += sizeof(Instruction);
+        return;
+    }
+
+    *dst = 0;
+    *dst = *srcA & *srcB;
+    // TODO: Update Status register (beautiful side effects)
+    registers.pc += sizeof(Instruction);
+}
+
+void op_AND_SRC_IMM() {
+    InstructionBits raw_instruction = {0};
+    memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
+    uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
+    uint64_t *src = get_register_ptr(raw_instruction.ins.regB);
+    uint32_t val = raw_instruction.ins.val;
+
+    if (!dst || !src) {
+        printf("%s, Failure, NULL register ", __func__);
+        registers.pc += sizeof(Instruction);
+        return;
+    }
+
+    *dst = 0;
+    *dst = *src & val;
+    // TODO: Update Status register (beautiful side effects)
+    registers.pc += sizeof(Instruction);
+}
+
+void op_OR_SRC_SRC() {
+    InstructionBits raw_instruction = {0};
+    memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
+    uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
+    uint64_t *srcA = get_register_ptr(raw_instruction.ins.regB);
+    uint64_t *srcB = get_register_ptr(raw_instruction.ins.regC);
+
+    if (!dst || !srcA  || !srcB {
+        printf("%s, Failure, NULL register ", __func__);
+        registers.pc += sizeof(Instruction);
+        return;
+    }
+
+    *dst = 0;
+    *dst = *srcA | *srcB;
+    // TODO: Update Status register (beautiful side effects)
+    registers.pc += sizeof(Instruction);
+}
+
+void op_OR_SRC_IMM() {
+    InstructionBits raw_instruction = {0};
+    memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
+    uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
+    uint64_t *src = get_register_ptr(raw_instruction.ins.regB);
+    uint32_t val = raw_instruction.ins.val;
+
+    if (!dst || !src) {
+        printf("%s, Failure, NULL register ", __func__);
+        registers.pc += sizeof(Instruction);
+        return;
+    }
+
+    *dst = 0;
+    *dst = *src | val;
+    // TODO: Update Status register (beautiful side effects)
+    registers.pc += sizeof(Instruction);
+}
+
+void op_XOR_SRC_SRC() {
+    InstructionBits raw_instruction = {0};
+    memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
+    uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
+    uint64_t *srcA = get_register_ptr(raw_instruction.ins.regB);
+    uint64_t *srcB = get_register_ptr(raw_instruction.ins.regC);
+
+    if (!dst || !srcA  || !srcB) {
+        printf("%s, Failure, NULL register ", __func__);
+        registers.pc += sizeof(Instruction);
+        return;
+    }
+
+    *dst = 0;
+    *dst = *srcA ^ *srcB;
+    // TODO: Update Status register (beautiful side effects)
+    registers.pc += sizeof(Instruction);
+}
+
+void op_XOR_SRC_IMM() {
+    InstructionBits raw_instruction = {0};
+    memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
+    uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
+    uint64_t *src = get_register_ptr(raw_instruction.ins.regB);
+    uint32_t val = raw_instruction.ins.val;
+
+    if (!dst || !src) {
+        printf("%s, Failure, NULL register ", __func__);
+        registers.pc += sizeof(Instruction);
+        return;
+    }
+
+    *dst = 0;
+    *dst = *src ^ val;
+    // TODO: Update Status register (beautiful side effects)
+    registers.pc += sizeof(Instruction);
 }
 
 void JMP() {
