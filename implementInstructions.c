@@ -22,6 +22,10 @@ instruction instruction_table[ISA_COUNT] = {
 };
 
 
+////////////////////////////////////////////////////////////////////////////////
+// Helpers
+////////////////////////////////////////////////////////////////////////////////
+
 uint64_t *get_register_ptr(uint8_t reg_id) {
     if (reg_id < 1) {
         printf("%s, Failure, register ID of 0?", __func__);
@@ -55,9 +59,22 @@ int get_register_id(uint64_t *reg_ptr) {
     return -1;
 }
 
+#define FETCH_REGS(dst, srcA, srcB, val)                                 \
+    InstructionBits raw_instruction = {0};                               \
+    memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction)); \
+    uint64_t *dst  = get_register_ptr(raw_instruction.ins.regA);         \
+    uint64_t *srcA = get_register_ptr(raw_instruction.ins.regB);         \
+    uint64_t *srcB = get_register_ptr(raw_instruction.ins.regC);         \
+    uint32_t val = raw_instruction.ins.val;                              \
+    if (!(dst) || !(srcA) || !(srcB)) {                                  \
+        printf("%s, Failure, NULL register\n", __func__);                \
+        registers.pc += sizeof(Instruction);                             \
+        return;                                                          \
+    }
+
 
 ////////////////////////////////////////////////////////////////////////////////
-// Operations:
+// Operations
 ////////////////////////////////////////////////////////////////////////////////
 
 void op_NOOP() {
@@ -127,7 +144,6 @@ void op_ADD_SRC_SRC() {
         return;
     }
 
-    *dst = 0;
     *dst = *srcA + *srcB;
     // TODO: Update Status register (beautiful side effects)
     registers.pc += sizeof(Instruction);
@@ -146,7 +162,6 @@ void op_ADD_SRC_IMM() {
         return;
     }
 
-    *dst = 0;
     *dst = *src + val;
     // TODO: Update Status register (beautiful side effects)
     registers.pc += sizeof(Instruction);
@@ -166,7 +181,6 @@ void op_SUB_SRC_SRC() {
         return;
     }
 
-    *dst = 0;
     *dst = *srcA - *srcB;
     // TODO: Update Status register (beautiful side effects)
     registers.pc += sizeof(Instruction);
@@ -185,7 +199,6 @@ void op_SUB_SRC_IMM() {
         return;
     }
 
-    *dst = 0;
     *dst = *src - val;
     // TODO: Update Status register (beautiful side effects)
     registers.pc += sizeof(Instruction);
@@ -204,7 +217,6 @@ void op_MUL_SRC_SRC() {
         return;
     }
 
-    *dst = 0;
     *dst = *srcA * *srcB;
     // TODO: Update Status register (beautiful side effects)
     registers.pc += sizeof(Instruction);
@@ -223,7 +235,6 @@ void op_MUL_SRC_IMM() {
         return;
     }
 
-    *dst = 0;
     *dst = *src * val;
     // TODO: Update Status register (beautiful side effects)
     registers.pc += sizeof(Instruction);
@@ -242,8 +253,12 @@ void op_DIV_SRC_SRC() {
         return;
     }
 
-    *dst = 0;
-    *dst = *srcA / *srcB;
+    if (*srcB == 0) {
+        printf("divide by zero!!");
+        *dst = 0;
+    } else {
+        *dst = *srcA / *srcB;
+    }
     // TODO: Update Status register (beautiful side effects)
     registers.pc += sizeof(Instruction);
 }
@@ -261,8 +276,12 @@ void op_DIV_SRC_IMM() {
         return;
     }
 
-    *dst = 0;
-    *dst = *src / val;
+    if (val == 0) {
+        printf("divide by zero!!");
+        *dst = 0;
+    } else {
+        *dst = *src / val;
+    }
     // TODO: Update Status register (beautiful side effects)
     registers.pc += sizeof(Instruction);
 }
@@ -280,8 +299,12 @@ void op_MOD_SRC_SRC() {
         return;
     }
 
-    *dst = 0;
-    *dst = *srcA % *srcB;
+    if (*srcB == 0) {
+        printf("divide by zero!!");
+        *dst = 0;
+    } else {
+        *dst = *srcA % *srcB;
+    }
     // TODO: Update Status register (beautiful side effects)
     registers.pc += sizeof(Instruction);
 }
@@ -299,8 +322,12 @@ void op_MOD_SRC_IMM() {
         return;
     }
 
-    *dst = 0;
-    *dst = *src % val;
+    if (val == 0) {
+        printf("divide by zero!!");
+        *dst = 0;
+    } else {
+        *dst = *src % val;
+    }
     // TODO: Update Status register (beautiful side effects)
     registers.pc += sizeof(Instruction);
 }
@@ -318,7 +345,6 @@ void op_LSH_SRC_SRC() {
         return;
     }
 
-    *dst = 0;
     *dst = *srcA << *srcB;
     // TODO: Update Status register (beautiful side effects)
     registers.pc += sizeof(Instruction);
@@ -337,7 +363,6 @@ void op_LSH_SRC_IMM() {
         return;
     }
 
-    *dst = 0;
     *dst = *src << val;
     // TODO: Update Status register (beautiful side effects)
     registers.pc += sizeof(Instruction);
@@ -356,7 +381,6 @@ void op_RSH_SRC_SRC() {
         return;
     }
 
-    *dst = 0;
     *dst = *srcA >> *srcB;
     // TODO: Update Status register (beautiful side effects)
     registers.pc += sizeof(Instruction);
@@ -375,7 +399,6 @@ void op_RSH_SRC_IMM() {
         return;
     }
 
-    *dst = 0;
     *dst = *src >> val;
     // TODO: Update Status register (beautiful side effects)
     registers.pc += sizeof(Instruction);
@@ -394,7 +417,6 @@ void op_AND_SRC_SRC() {
         return;
     }
 
-    *dst = 0;
     *dst = *srcA & *srcB;
     // TODO: Update Status register (beautiful side effects)
     registers.pc += sizeof(Instruction);
@@ -413,7 +435,6 @@ void op_AND_SRC_IMM() {
         return;
     }
 
-    *dst = 0;
     *dst = *src & val;
     // TODO: Update Status register (beautiful side effects)
     registers.pc += sizeof(Instruction);
@@ -432,7 +453,6 @@ void op_OR_SRC_SRC() {
         return;
     }
 
-    *dst = 0;
     *dst = *srcA | *srcB;
     // TODO: Update Status register (beautiful side effects)
     registers.pc += sizeof(Instruction);
@@ -451,7 +471,6 @@ void op_OR_SRC_IMM() {
         return;
     }
 
-    *dst = 0;
     *dst = *src | val;
     // TODO: Update Status register (beautiful side effects)
     registers.pc += sizeof(Instruction);
@@ -470,7 +489,6 @@ void op_XOR_SRC_SRC() {
         return;
     }
 
-    *dst = 0;
     *dst = *srcA ^ *srcB;
     // TODO: Update Status register (beautiful side effects)
     registers.pc += sizeof(Instruction);
@@ -489,7 +507,6 @@ void op_XOR_SRC_IMM() {
         return;
     }
 
-    *dst = 0;
     *dst = *src ^ val;
     // TODO: Update Status register (beautiful side effects)
     registers.pc += sizeof(Instruction);
