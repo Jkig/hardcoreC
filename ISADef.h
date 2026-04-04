@@ -17,7 +17,7 @@ typedef uint8_t Opcode;
 enum {
     INVALID = 0,
     NOOP,
-    MOV,// register
+    MOV_REG,
     MOV_IMM_TO_LO,
     MOV_IMM_TO_HI,
     ADD,

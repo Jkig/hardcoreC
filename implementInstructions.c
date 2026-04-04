@@ -55,10 +55,10 @@ int get_register_id(uint64_t *reg_ptr) {
 
 
 void NOOP() {
-    registers.pc++;
+    registers.pc += sizeof(Instruction);
 }
 
-void MOV() {
+void op_MOV_REG() {
     InstructionBits raw_instruction = {0};
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
     uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
@@ -73,6 +73,41 @@ void MOV() {
     *dst = *src;
     registers.pc += sizeof(Instruction);
 }
+
+void op_MOV_IMM_TO_LO() {
+    InstructionBits raw_instruction = {0};
+    memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
+    uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
+    uint32_t val = raw_instruction.ins.val;
+
+    if (!dst) {
+        printf("%s, Failure, NULL register ", __func__);
+        registers.pc += sizeof(Instruction);
+        return;
+    }
+
+    *dst &= 0xFFFFFFFF00000000;
+    *dst |= val;
+    registers.pc += sizeof(Instruction);
+}
+
+void op_MOV_IMM_TO_HI() {
+    InstructionBits raw_instruction = {0};
+    memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
+    uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
+    uint32_t val = raw_instruction.ins.val;
+
+    if (!dst) {
+        printf("%s, Failure, NULL register ", __func__);
+        registers.pc += sizeof(Instruction);
+        return;
+    }
+
+    *dst &= 0x00000000FFFFFFFF;
+    *dst |= val;
+    registers.pc += sizeof(Instruction);
+}
+
 
 void ADD() {
     *res = src1 + src2;
