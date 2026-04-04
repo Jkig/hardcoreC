@@ -187,7 +187,7 @@ def to_dasm(file_name: str):
     
     input_file.close()
     output_file.close()
-    
+
 
 
 
@@ -195,6 +195,19 @@ def to_dasm(file_name: str):
 def compile(file_name: str, output_file_name: str, skip_cleanup: bool):
     tokenized_file_name = ".".join(file_name.split(".")[:-1] + ["tokenized"])
     tokenize_file(file_name, tokenized_file_name) # is this the right term?
+
+    content = ""
+    with open(tokenized_file_name, "r") as f:
+        content = f.read()
+
+    if "static " in content:
+        print("static found, not supported yet")
+
+    content = content.replace("static ", "")
+
+    with open(tokenized_file_name, "w") as f:
+        f.write(content)
+
 
     to_dasm(file_name)
 

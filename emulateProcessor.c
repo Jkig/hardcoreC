@@ -17,6 +17,7 @@
 
 
 // External globals
+// TODO: align this
 extern instruction instruction_table[ISA_COUNT];
 
 

@@ -20,7 +20,15 @@ I want to be able to run automated tests on all the files in the test programs, 
 - I'll implement a limited version of c
 
 ### Whats not included in my C
+- Any static
 - goto
 - heap
-- any stdlib except for stdint for now
 - Main can't take parameters ofc
+- any stdlib except for stdint for now
+
+#### The above aren't crazy undertakings, but I'll start simple
+
+
+# Potential fun notes, not needed
+### potential mistakes
+I'll have different variations as different core instruciotns, not a few bits for it.
