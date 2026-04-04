@@ -1,5 +1,6 @@
 # Sometimes I get the itch to write some of these really cool things
 This isn't a project I'll devote time to, but this is a place I can at least get it thorugh my fingers and move back to productive work. Sometimes these topics capture my interest.
+I'm jumping in the deep end before reading the textbook/ manual, but will go for inspiration here or there in the moment.
 
 ## Technically I should do the lowest level work first, but again, I'm doing what I have/want to first
 write some specs out, then they can expend in the future, separate the notes from the code a bit more.
@@ -26,8 +27,21 @@ I want to be able to run automated tests on all the files in the test programs, 
 - Main can't take parameters ofc
 - any stdlib except for stdint for now
 
+### Limitations in my ASM
+- All imediate values are decimal
+
 #### The above aren't crazy undertakings, but I'll start simple
 
+# To Study
+- asm for a function call
+- is an ast for all potential jumps? just functions, or something else?
+- start with sample ASM files, and test manually -> the simple assembler
+
+- I think I'm liking part of the assembler in python, esp. the instruction tonop part? But its fine in either. It doesn't need to be production quality
+- I'm really going back and forth on this. I'm not sure, the top end is defeinitly better in python, the bottom definitely in python
+- doing both might be the worst of both worlds?
+- I think I need to do it in C in that case...
+- maybe just make a couple updates -> reformat it to .dasm.5, space sepearted.. order is better, actual ops is there?
 
 # Potential fun notes, not needed
 ### potential mistakes

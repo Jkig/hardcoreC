@@ -1,6 +1,6 @@
 // this isn't too bad
 //64 bit architecture
-#include "emulateProcessor.h"
+#include "processor.h"
 #include "implementInstructions.h"
 #include "ISADef.h"
 #include <stdbool.h>

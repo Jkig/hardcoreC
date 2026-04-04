@@ -1,6 +1,17 @@
 import os
 import sys
 
+
+class ASTNode:
+    def __init__(self, node_type, func_name=None):
+        self.node_type = node_type
+        self.func_name = func_name
+        self.children = []
+        self.code = ""
+        # TODO: Is the easiest way to build the code here after I've built the AST?
+
+
+
 def tokenize_file(input_filename, output_filename):
     try:
         input_file = open(input_filename, "r")
@@ -164,9 +175,12 @@ def tokenize_file(input_filename, output_filename):
     output_file.close()
 
 
-def to_dasm(file_name: str):
-    # This is going to be fun!
-    # This is wehre I make sure I have a sufficient ISA
+def to_dasm(root_node: ASTNode, file_name: str):
+    '''
+    Takes a root node of the AST with .dasm lines, and generates dasm code for it, writing to a .dasm file
+    # TODO If I don't have sufficient instructions in my ISA I'll find out here
+    # TODO I need some more information, like the globals and statics before I can build the file.
+    '''
 
     dasm_file_name = ".".join(file_name.split(".")[:-1] + ["dasm"])
     tokenized_file_name = ".".join(file_name.split(".")[:-1] + ["tokenized"])
@@ -189,7 +203,17 @@ def to_dasm(file_name: str):
     output_file.close()
 
 
-
+def build_AST(tokenized_file_name) -> ASTNode:
+    '''
+    ## Throws an error if not possible to build an AST 
+    - (e.g. syntax error
+    - funciton not found
+    - cyclic dependencies
+    
+    ## Notes
+    # I can always start from main, this will be the root of the AST
+    '''
+    pass
 
 
 def compile(file_name: str, output_file_name: str, skip_cleanup: bool):
@@ -208,11 +232,20 @@ def compile(file_name: str, output_file_name: str, skip_cleanup: bool):
     with open(tokenized_file_name, "w") as f:
         f.write(content)
 
+    root_node = None
+    try :
+        root_node = build_AST(tokenized_file_name)
+    except Exception as e:
+        print(f"Error building AST: {e}")
+        print(f"Cleanup skipped")
+        return
+    
 
-    to_dasm(file_name)
+
+    to_dasm(root_node, file_name)
 
     # undeceided on if this should be done in c or maybe just here in python
-    # assemble_binary(file_name, output_file_name)
+    # assemble_binary(file_name, output_file_name) # Implmement it in both sides, can I get the enum and such from ctypes?
 
     if not skip_cleanup:
         os.remove(tokenized_file_name)

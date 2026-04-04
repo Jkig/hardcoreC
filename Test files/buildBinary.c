@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "../emulateProcessor.h"
+#include "../processor.h"
 
 // This file should help me build binaries to run on the processor manually before I can trust the assembler
 
