@@ -5,17 +5,25 @@
 #include <stdint.h>
 
 #define RAM_SIZE (1024 * 1024)    // 1 mb of ram
+#define GENERAL_PURPOSE_REGISTER_COUNT  16
 
-struct _registers {
-    uint64_t *pc;
-    uint64_t *sp;
-    uint64_t r1;
-    uint64_t r2;
-    uint64_t r3;
-    uint64_t r4;
+typedef struct {
+    uint64_t pc;
+    uint64_t sp;
     uint64_t res;
-    uint64_t status
-};
-typedef struct _registers _registers;
+    uint64_t status;
+    uint64_t gp[GENERAL_PURPOSE_REGISTER_COUNT];
+} Registers;
+
+typedef enum {
+    REG_PC = 1,
+    REG_SP,
+    REG_RES,
+    REG_STATUS
+    // General purpose arrays will be in an array here
+} RegisterId;
+
+#define LAST_REGISTER_BEFORE_GP REG_STATUS
+#define GP_REGISTER_OFFSET (LAST_REGISTER_BEFORE_GP + 1)
 
 #endif // EMULATE_PROCESSOR_H

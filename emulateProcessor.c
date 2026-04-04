@@ -24,7 +24,7 @@ extern instruction instruction_table[ISA_COUNT];
 
 
 // GLOBALS:
-_registers registers;
+Registers registers;
 volatile uint64_t interrupt_signals;    // bit field
 uint8_t ram[RAM_SIZE];
 uint64_t *vtable_start = &ram[8];

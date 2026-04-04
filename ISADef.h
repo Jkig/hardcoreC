@@ -2,37 +2,70 @@
 // This will be an enum for the isntructions, which can get packet with other things to fit in the program counter, and also have associated string so I can compile to text assembly, then I'll pack that
 #ifndef ISADEFS_H
 #define ISADEFS_H
+#include <assert.h>
 
 
-typedef uint64_t MyISA;
+/* Format of the instruction:
+
+Every instruction is a 64 bit number, split into these parts
+
+(I want to make this as simple as possible), and I can afford to
+ */
+
+
+typedef uint8_t Opcode;
 enum {
-    ADD = 1ULL,
-    SUB = 2ULL,
-    MUL = 3ULL,
-    DIV = 4ULL,
-    LSH = 5ULL,
-    RSH = 6ULL,
-    LOAD = 7ULL,
-    STORE = 8ULL,
-    JMP = 9ULL,
-    CMP = 10ULL,
+    INVALID = 0,
+    NOOP,
+    MOV,// register
+    MOV_IMM_TO_LO,
+    MOV_IMM_TO_HI,
+    ADD,
+    SUB,
+    MUL,
+    DIV,
+    LSH,
+    RSH,
+    LOAD,
+    STORE,
+    JMP,
+    CMP,
+
     ISA_COUNT,
 };
 
 
+typedef struct Instruction {
+    Opcode opcode;
+    uint8_t regA;// Destination
+    uint8_t regB;
+    uint8_t regC;
+    uint32_t val;
+} Instruction;
+
+typedef union InstructionBits {
+    uint64_t raw;
+    Instruction ins;
+} InstructionBits;
+
+static_assert(ISA_COUNT < 256);
+static_assert(sizeof(Instruction) == 8);
+static_assert(sizeof(InstructionBits) == 8);
+
+
 typedef uint64_t MyStatus;
 enum {
-   EQUAL = 0ULL,
-   LESS = 1ULL,
-   GREATER = 2ULL
+    EQUAL = 0ULL,
+    LESS = 1ULL,
+    GREATER = 2ULL
 };
 
 
 typedef uint64_t ProgramState;
 enum {
-   NOT_STARTED = 0ULL,
-   RUNNING = 1ULL,
-   FAILED = 2ULL
+    NOT_STARTED = 0ULL,
+    RUNNING = 1ULL,
+    FAILED = 2ULL
 };
 /*  Core Instructions I'll need (IDK all the instructions that exist, but this should ge tme starts)
  * ext// exit program // An ISA doesn't need to include this, but it came to mind to make it easier to emulate,
