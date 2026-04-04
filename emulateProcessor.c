@@ -7,26 +7,20 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdio.h>
-
-// I won't emulate a real processor, I'll only get close enought to really solidify the idea
-
+#include <stdalign.h>
 
 // I'll only have 2 real syscalls, in/out, this program can catch them, in and out through the console that I'm actually using
 // Could trigger interrupts manually from annother thread later
 
 
-
 // External globals
-// TODO: align this
 extern instruction instruction_table[ISA_COUNT];
 
 
-
-
-// GLOBALS:
+// Globals
 Registers registers;
 volatile uint64_t interrupt_signals;    // bit field
-uint8_t ram[RAM_SIZE];
+alignas(8) uint8_t ram[RAM_SIZE];
 uint64_t *vtable_start = &ram[8];
 ProgramState program_state = NOT_STARTED;// TODO: Is this needed?
 uint64_t program_return = 0;
@@ -46,6 +40,12 @@ void executeInterrupts() {
     }
 
     // Switch context back
+}
+
+void execute() {
+    InstructionBits raw_instruction = {0};
+    memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
+    instruction_table[raw_instruction.ins.opcode]();// I/O is a bit special, but I just put it in here
 }
 
 // Function to load file into RAM
@@ -72,12 +72,19 @@ size_t load_file_to_ram(const char *filename) {
 int debug() {
     // TODO: latere I'll implement a lot larger debug mode, but for now just step, print registers, and 
     // adding a full on GDB isn't absolutely crazy hard. For now just print a list of addresses for the functions, expand it later
+    
+    // I think I want a couple levels of debuging, one for later is more for debugging C, and I want to be able to place anything in any register.
+    
     printf(".");
     char cmd = fgetchar();
     switch(cmd) {
         case 'P':
-            // Print the contents of all registers
-            printf("PC: %016p, SP: %016p, r1-r4: %016lx, %016lx, %016lx, %016lx\n", registers.pc, registers.sp, registers.r1, registers.r2, registers.r3, registers.r4);
+            printf("PC: %016p, SP: %016p, status: %016lx, Res:%016lx\n", registers.pc, registers.sp, registers.status, registers.res);
+            printf("general purpose registers:");
+            for (uint8_t i=0;i<GENERAL_PURPOSE_REGISTER_COUNT;i++) {
+                printf("   gp[%d]: %016lx\n", i, registers.gp[i]);
+            }
+            printf("\n");
             break;
         case 'p':
             // read address from user and print the contents of that address in RAM
@@ -100,7 +107,6 @@ int debug() {
     }
     printf("\n");
 }
-
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
@@ -136,8 +142,7 @@ int main(int argc, char *argv[]) {
             executeInterrupt();// call the right interrupt handler
         }
 
-        // execute this instruction
-        instruction_table[*(registers.pc)]();// I/O is a bit special, but I just put it in here
+        execute();
         if (program_state != 1)
             break;
 
