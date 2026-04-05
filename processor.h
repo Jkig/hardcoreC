@@ -19,11 +19,10 @@ typedef enum {
     REG_PC = 1,
     REG_SP,
     REG_RES,
-    REG_STATUS
-    // General purpose arrays will be in an array here
+    REG_STATUS,
+    GP_REGISTER_OFFSETS// General purpose arrays will be in an array here
 } RegisterId;
 
-#define LAST_REGISTER_BEFORE_GP REG_STATUS
-#define GP_REGISTER_OFFSET (LAST_REGISTER_BEFORE_GP + 1)
+#define LAST_REGISTER_BEFORE_GP (GP_REGISTER_OFFSETS - 1)
 
 #endif // EMULATE_PROCESSOR_H

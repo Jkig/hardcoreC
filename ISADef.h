@@ -20,6 +20,7 @@ enum {
     MOV_REG,
     MOV_IMM_TO_LO,
     MOV_IMM_TO_HI,
+
     ADD_SRC_SRC,
     ADD_SRC_IMM,
     SUB_SRC_SRC,

@@ -9,7 +9,7 @@ write some specs out, then they can expend in the future, separate the notes fro
 - my own (ARM inspired) limited ISA
 - an assembler to turn this assembly into a binary file
 - a compiler (real C to assembly for my ISA)
-- An emulator to run this binary on 
+- An emulator to run this binary on
 - A debugger
 
 I want to be able to run automated tests on all the files in the test programs, same C source file is compiled by gcc and ran on my PC, then Derek compiled (by my compiler, which is a c file compiled by gcc, then ran on my processor). Run a leetcode problem, maybe solve sudoku, diff mine vs standard?
@@ -36,12 +36,6 @@ I want to be able to run automated tests on all the files in the test programs, 
 - asm for a function call
 - is an ast for all potential jumps? just functions, or something else?
 - start with sample ASM files, and test manually -> the simple assembler
-
-- I think I'm liking part of the assembler in python, esp. the instruction tonop part? But its fine in either. It doesn't need to be production quality
-- I'm really going back and forth on this. I'm not sure, the top end is defeinitly better in python, the bottom definitely in python
-- doing both might be the worst of both worlds?
-- I think I need to do it in C in that case...
-- maybe just make a couple updates -> reformat it to .dasm.5, space sepearted.. order is better, actual ops is there?
 
 # Potential fun notes, not needed
 ### potential mistakes
