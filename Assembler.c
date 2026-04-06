@@ -166,7 +166,7 @@ Instruction build_one_binary_instruction(const char *line) {
 
         if (is_immediate(elements.arg3)) {
             opcode++; // This is a nice trick, becuase my arithmetic ops are always defined in number as _src then _imm
-            res.val = atoi(elements.arg3);
+            res.val = atoi(elements.arg3);// TODO: bounds check, own func...
         } else {
             res.regC = get_reg_number(elements.arg3);
         }
@@ -192,7 +192,7 @@ void print_instruction(Instruction sample) {
     printf("opcode: 0x%04x, A: 0x%04x, B: 0x%04x, C: 0x%04x, Val: 0x%08x\n", sample.opcode, sample.regA, sample.regB, sample.regC, sample.val);
 }
 
-int main() {
+int main(int argc, char *argv[]) {
     InstructionBits full = {0};
     /*
     sample = build_one_binary_instruction("\tmov gp1, 1234");
@@ -203,7 +203,7 @@ int main() {
     full.ins = build_one_binary_instruction("\tadd gp1, gp2, gp3");
     printf("0x%016lx\n", full.raw);
     print_instruction(full.ins);
-    full.ins = build_one_binary_instruction("\tmul gp1, gp2, 4");
+    full.ins = build_one_binary_instruction("\tmul gp1, gp2, 305813115");
     printf("0x%016lx\n", full.raw);
     print_instruction(full.ins);
     return 0;
@@ -211,4 +211,42 @@ int main() {
 
     // Goes from .sasm (Derek's assembly) file to a binary file
     // take a file name etc..
+    const char *input_file = NULL;
+    const char *output_file = NULL;
+
+    int i = 1; // skip argv[0]
+
+    while (i < argc) {
+        char *arg = argv[i];
+        printf("%s\n", arg);
+
+        if (strcmp(arg, "-o") == 0) {
+            i++;
+            if (i < argc) {
+                output_file = argv[i];
+            } else {
+                printf("Usage: %s <file_name>.c -o <binary_file_name>\n", argv[0]);
+                return 1;
+            }
+        } else {
+            // assume it's the input file
+            if (input_file == NULL) {
+                input_file = arg;
+            } else {
+                printf("Unknown argument: %s\n", arg);
+                return 1;
+            }
+        }
+        i++;
+    }
+
+    if (input_file == NULL || output_file == NULL) {
+        printf("File names not set\n");
+        printf("   input_file: %s\n   output_file: %s\n",
+               input_file ? input_file : "NULL",
+               output_file ? output_file : "NULL");
+        return 1;
+    }
+
+    return 0;
 }

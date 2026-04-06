@@ -257,7 +257,7 @@ if __name__ == "__main__":
     save_temps = False
     args = sys.argv[1:]
 
-    i = 0# skip python3 Compiler.py
+    i = 0
     while i < len(args):
         arg = args[i]
         print(arg)
