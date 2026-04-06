@@ -17,6 +17,11 @@ typedef uint8_t Opcode;
 enum {
     INVALID = 0,
     NOOP,
+    LOAD,
+    STORE,
+    JMP,
+    CMP,
+
     MOV_REG,
     MOV_IMM_TO_LO,
     MOV_IMM_TO_HI,
@@ -41,11 +46,6 @@ enum {
     OR_SRC_IMM,
     XOR_SRC_SRC,
     XOR_SRC_IMM,
-
-    LOAD,
-    STORE,
-    JMP,
-    CMP,
 
     ISA_COUNT,
 };

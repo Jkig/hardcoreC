@@ -34,6 +34,7 @@ I want to be able to run automated tests on all the files in the test programs, 
 
 # To Study
 - asm for a function call
+- opcode definition?
 - is an ast for all potential jumps? just functions, or something else?
 - start with sample ASM files, and test manually -> the simple assembler
 

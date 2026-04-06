@@ -20,7 +20,7 @@ typedef enum {
     REG_SP,
     REG_RES,
     REG_STATUS,
-    GP_REGISTER_OFFSETS// General purpose arrays will be in an array here
+    GP_REGISTER_OFFSETS// General purpose arrays will be in an array here, going from [gp0, gp<GENERAL_PURPOSE_REGISTER_COUNT-1>] inclusive  
 } RegisterId;
 
 #define LAST_REGISTER_BEFORE_GP (GP_REGISTER_OFFSETS - 1)
