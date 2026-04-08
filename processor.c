@@ -44,12 +44,11 @@ void executeInterrupts() {
 
 void execute() {
     InstructionBits raw_instruction = {0};
-    printf("pc: %lu\n", registers.pc);
-    printf("start: %ld\n", registers.pc);
     if (registers.pc < (uint64_t) &ram[0] || registers.pc >= (uint64_t) &ram[RAM_SIZE]) {
         printf("Congrats on the segfault!\n");
         printf("Tried to access an instruction outside of ram\n");
     }
+    printf("pc: %lu\n", registers.pc);
     printf("--> %p, %p, %lx\n\n", &ram[0], &ram[registers.pc], registers.pc);
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
     printf("\n\n%d, %d, %d, %d, %ld, %p, %p\n\n\n", raw_instruction.ins.opcode, raw_instruction.ins.regA, raw_instruction.ins.regB, raw_instruction.ins.val, raw_instruction.raw, op_AND_SRC_IMM, instruction_table[raw_instruction.ins.opcode]);
@@ -93,10 +92,10 @@ int debug() {
     char cmd = getchar();
     switch(cmd) {
         case 'P':
-            printf("PC: %016lx, SP: %016lx, status: %016lx, Res:%016lx\n", registers.pc, registers.sp, registers.status, registers.res);
-            printf("general purpose registers:");
+            printf("PC: 0c%016lx, SP: 0x%016lx, status: 0x%016lx, Res: 0x%016lx\n", registers.pc, registers.sp, registers.status, registers.res);
+            printf("general purpose registers:\n");
             for (uint8_t i=0;i<GENERAL_PURPOSE_REGISTER_COUNT;i++) {
-                printf("   gp[%d]: %016lx\n", i, registers.gp[i]);
+                printf("   gp[%d]:\t0x%016lx\n", i, registers.gp[i]);
             }
             printf("\n");
             break;
@@ -144,10 +143,12 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "Failed to load file into RAM\nEmpty binary file or read error\n");
         return 1;
     }
-
-    registers.sp = (uint64_t)(&ram[0]);
-    registers.pc = (uint64_t)(&ram[8]);
     
+    memcpy(&registers.sp, &ram[0], sizeof(uint64_t));
+    // memcpy(&registers.pc, (uint8_t*) ((uint64_t *) &ram[0]) + 1, sizeof(uint64_t));
+    // TODO: I'm leaving it as 0 to just run the first instruction.
+
+
     while (true) {
         if (debug_mode && debug()) break;
 
