@@ -44,7 +44,7 @@ void executeInterrupts() {
 
 void execute() {
     InstructionBits raw_instruction = {0};
-    if (registers.pc < (uint64_t) &ram[0] || registers.pc >= (uint64_t) &ram[RAM_SIZE]) {
+    if (registers.pc >= (uint64_t) &ram[RAM_SIZE]) {
         printf("Congrats on the segfault!\n");
         printf("Tried to access an instruction outside of ram\n");
     }
@@ -65,10 +65,10 @@ size_t load_file_to_ram(const char *filename) {
 
     // Read up to RAM_SIZE bytes
     size_t bytes_read = fread(ram, 1, RAM_SIZE, file);
-    printf("reading from %s:", filename);
+    printf("reading from %s:\n", filename);
     for (uint8_t i=0;i<64;i++) {
         printf("%d ", ram[i]);
-        if ((i % 4) == 0) printf("\n");
+        if (((i+1) % 8) == 0) printf("\n");
     }
 
     if (ferror(file)) {
@@ -92,7 +92,7 @@ int debug() {
     char cmd = getchar();
     switch(cmd) {
         case 'P':
-            printf("PC: 0c%016lx, SP: 0x%016lx, status: 0x%016lx, Res: 0x%016lx\n", registers.pc, registers.sp, registers.status, registers.res);
+            printf("PC: 0x%016lx, SP: 0x%016lx, status: 0x%016lx, Res: 0x%016lx\n", registers.pc, registers.sp, registers.status, registers.res);
             printf("general purpose registers:\n");
             for (uint8_t i=0;i<GENERAL_PURPOSE_REGISTER_COUNT;i++) {
                 printf("   gp[%d]:\t0x%016lx\n", i, registers.gp[i]);
@@ -154,14 +154,10 @@ int main(int argc, char *argv[]) {
 
         // poll the interrupts
         // do them one after the other
-        while (interrupt_signals != 0) {
-            executeInterrupts();// call the right interrupt handler
-        }
+        while (interrupt_signals != 0) executeInterrupts();
 
         execute();
-        if (program_state != 1)
-            break;
-
+        // if (program_state != 1) break;
     }
     while (true) {
         if (debug()) break;

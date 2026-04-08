@@ -180,6 +180,20 @@ Instruction build_one_binary_instruction(const char *line) {
         return res;
         
     } else if (lookup_value(mov, sizeof(mov) / sizeof(StringToInt), elements.op, &opcode)) {
+        if (elements.arg1[0] == '\0' || elements.arg2[0] == '\0') {
+            printf("Not all needed args for mov");
+            return invalid_res;
+        }
+        
+        res.regA = get_reg_number(elements.arg1);
+
+        if (is_immediate(elements.arg2)) {
+            opcode++; // trick by if mov i
+            // TODO: either add mov HI, or split it in a few chunks. Right now just MOV_LO
+            res.val = atoi(elements.arg2);// TODO: bounds check, own func...
+        } else {
+            res.regC = get_reg_number(elements.arg2);
+        }
         res.opcode = opcode;
         
         return res;
@@ -192,19 +206,6 @@ void print_instruction(Instruction sample) {
     printf("opcode: 0x%04x, A: 0x%04x, B: 0x%04x, C: 0x%04x, Val: 0x%08x\n", sample.opcode, sample.regA, sample.regB, sample.regC, sample.val);
 }
 
-void print_sample_junk(uint64_t value) {
-    // First value is whatever, I won't use SP.
-    // second points to address of start, then it goes on from there
-    // I'll have it point to the start, and just run one instruciton
-
-    uint64_t zero  = 0;
-    FILE *f = fopen("output.bin", "wb");
-
-    fwrite(&value, sizeof(uint64_t), 1, f);
-    fwrite(&zero, sizeof(uint64_t), 1, f);
-
-    fclose(f);
-}
 
 
 int main(int argc, char *argv[]) {
@@ -215,8 +216,23 @@ int main(int argc, char *argv[]) {
     sample = build_one_binary_instruction("\tmov gp1, gp2");
     printf("0x%016llx\n", sample);
     */
-    full.ins = build_one_binary_instruction("\tadd gp1, gp2, 17");
-    print_sample_junk(full.raw);
+    
+    // First value is whatever, I won't use SP.
+    // second points to address of start, then it goes on from there
+    // I'll have it point to the start, and just run one instruciton
+
+    FILE *f = fopen("output.bin", "wb");
+    full.ins = build_one_binary_instruction("\tmov gp4, 9");
+    fwrite(&full.ins, sizeof(uint64_t), 1, f);
+    full.ins = build_one_binary_instruction("\tadd gp1, gp4, 17");
+    fwrite(&full.ins, sizeof(uint64_t), 1, f);
+
+    uint64_t zero  = 0;
+    fwrite(&zero, sizeof(uint64_t), 1, f);
+
+    fclose(f);
+
+
 
     return 0;
 

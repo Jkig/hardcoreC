@@ -41,3 +41,13 @@ I want to be able to run automated tests on all the files in the test programs, 
 # Potential fun notes, not needed
 ### potential mistakes
 I'll have different variations as different core instruciotns, not a few bits for it.
+
+
+
+# Build
+## Assembler
+gcc Assembler.c -o assembler
+
+## Processor/ emulator/ debugger program
+gcc processor.c implementInstructions.c -o proc
+

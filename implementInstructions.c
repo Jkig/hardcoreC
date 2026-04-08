@@ -21,10 +21,10 @@ extern uint8_t ram[RAM_SIZE];
 
 uint64_t *get_register_ptr(uint8_t reg_id) {
     if (reg_id < 1) {
-        printf("%s, Failure, register ID of 0?", __func__);
+        printf("%s, Failure, register ID of 0?\n", __func__);
         return NULL;
     } else if (reg_id > GENERAL_PURPOSE_REGISTER_COUNT + LAST_REGISTER_BEFORE_GP) {
-        printf("%s, Failure, register ID of 0?", __func__);
+        printf("%s, Failure, register ID of 0?\n", __func__);
         return NULL;
     }
 
@@ -52,7 +52,8 @@ int get_register_id(uint64_t *reg_ptr) {
     return -1;
 }
 
-#define FETCH_3REGS(dst, srcA, srcB, val)                                 \
+#define FETCH_3REGS(dst, srcA, srcB, val)                                \
+    printf("%s: exec\n", __func__);                                      \
     InstructionBits raw_instruction = {0};                               \
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction)); \
     uint64_t *dst  = get_register_ptr(raw_instruction.ins.regA);         \
@@ -66,6 +67,7 @@ int get_register_id(uint64_t *reg_ptr) {
     }
 
 #define FETCH_2REGS(dst, src, val)                                       \
+    printf("%s: exec\n", __func__);                                      \
     InstructionBits raw_instruction = {0};                               \
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction)); \
     uint64_t *dst  = get_register_ptr(raw_instruction.ins.regA);         \
@@ -98,7 +100,7 @@ void op_MOV_REG() {
     uint64_t *src = get_register_ptr(raw_instruction.ins.regB);
 
     if (!dst || !src) {
-        printf("%s, Failure, NULL register ", __func__);
+        printf("%s, Failure, NULL register\n", __func__);
         registers.pc += sizeof(Instruction);
         return;
     }
@@ -108,13 +110,14 @@ void op_MOV_REG() {
 }
 
 void op_MOV_IMM_TO_LO() {
+    printf("%s: exec\n", __func__);
     InstructionBits raw_instruction = {0};
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
     uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
     uint32_t val = raw_instruction.ins.val;
 
     if (!dst) {
-        printf("%s, Failure, NULL register ", __func__);
+        printf("%s, Failure, NULL register\n", __func__);
         registers.pc += sizeof(Instruction);
         return;
     }
@@ -131,7 +134,7 @@ void op_MOV_IMM_TO_HI() {
     uint32_t val = raw_instruction.ins.val;
 
     if (!dst) {
-        printf("%s, Failure, NULL register ", __func__);
+        printf("%s, Failure, NULL register\n", __func__);
         registers.pc += sizeof(Instruction);
         return;
     }
@@ -300,7 +303,7 @@ void op_OR_SRC_SRC() {
     uint64_t *srcB = get_register_ptr(raw_instruction.ins.regC);
 
     if (!dst || !srcA  || !srcB) {
-        printf("%s, Failure, NULL register ", __func__);
+        printf("%s, Failure, NULL register\n", __func__);
         registers.pc += sizeof(Instruction);
         return;
     }
@@ -335,19 +338,19 @@ void op_XOR_SRC_IMM() {
 }
 
 void op_JMP() {
-    // *pc = addr;
+    registers.pc += sizeof(Instruction);
 }
 
 void op_LOAD() {
-    
+    registers.pc += sizeof(Instruction);
 }
 
 void op_STORE() {
-    // *pc = addr;
+    registers.pc += sizeof(Instruction);
 }
 
 void op_CMP() {
-    // *pc = addr;
+    registers.pc += sizeof(Instruction);
 }
 
 // Globals
