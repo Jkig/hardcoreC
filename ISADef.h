@@ -10,8 +10,9 @@
 Every instruction is a 64 bit number, split into these parts
 
 (I want to make this as simple as possible), and I can afford to
- */
+*/
 
+void op_AND_SRC_IMM();
 
 typedef uint8_t Opcode;
 enum {

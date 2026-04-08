@@ -18,7 +18,7 @@ StringToInt REGISTER_NAMES[] = {
     {"sp", REG_SP},
     {"res", REG_RES},
     {"status", REG_STATUS},
-    {"gp", GP_REGISTER_OFFSETS},
+    {"gp", GP_REGISTERS_OFFSET},
 };
 
 StringToInt direct_opcodes[] = {
@@ -135,7 +135,7 @@ int is_immediate(const char *s) {
 int get_reg_number(const char *s) {
     uint8_t register_number = 0;
     if (s[0] == 'g' && s[1] == 'p')
-        return atoi(&s[2]) + GP_REGISTER_OFFSETS;
+        return atoi(&s[2]) + GP_REGISTERS_OFFSET;
 
     if (lookup_value(REGISTER_NAMES, sizeof(REGISTER_NAMES) / sizeof(StringToInt), s, &register_number))
         return register_number;
@@ -192,6 +192,21 @@ void print_instruction(Instruction sample) {
     printf("opcode: 0x%04x, A: 0x%04x, B: 0x%04x, C: 0x%04x, Val: 0x%08x\n", sample.opcode, sample.regA, sample.regB, sample.regC, sample.val);
 }
 
+void print_sample_junk(uint64_t value) {
+    // First value is whatever, I won't use SP.
+    // second points to address of start, then it goes on from there
+    // I'll have it point to the start, and just run one instruciton
+
+    uint64_t zero  = 0;
+    FILE *f = fopen("output.bin", "wb");
+
+    fwrite(&value, sizeof(uint64_t), 1, f);
+    fwrite(&zero, sizeof(uint64_t), 1, f);
+
+    fclose(f);
+}
+
+
 int main(int argc, char *argv[]) {
     InstructionBits full = {0};
     /*
@@ -200,6 +215,11 @@ int main(int argc, char *argv[]) {
     sample = build_one_binary_instruction("\tmov gp1, gp2");
     printf("0x%016llx\n", sample);
     */
+    full.ins = build_one_binary_instruction("\tadd gp1, gp2, 17");
+    print_sample_junk(full.raw);
+
+    return 0;
+
     full.ins = build_one_binary_instruction("\tadd gp1, gp2, gp3");
     printf("0x%016lx\n", full.raw);
     print_instruction(full.ins);

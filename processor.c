@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdalign.h>
+#include <string.h>
 
 // I'll only have 2 real syscalls, in/out, this program can catch them, in and out through the console that I'm actually using
 // Could trigger interrupts manually from annother thread later
@@ -21,7 +22,7 @@ extern instruction instruction_table[ISA_COUNT];
 Registers registers;
 volatile uint64_t interrupt_signals;    // bit field
 alignas(8) uint8_t ram[RAM_SIZE];
-uint64_t *vtable_start = &ram[8];
+uint64_t *vtable_start = (uint64_t *) (uint64_t) &ram[8];
 ProgramState program_state = NOT_STARTED;// TODO: Is this needed?
 uint64_t program_return = 0;
 
@@ -38,13 +39,20 @@ void executeInterrupts() {
             registers.pc = vtable_start[voffset];
         // then execute until it returns? this still needs work
     }
-
     // Switch context back
 }
 
 void execute() {
     InstructionBits raw_instruction = {0};
+    printf("pc: %lu\n", registers.pc);
+    printf("start: %ld\n", registers.pc);
+    if (registers.pc < (uint64_t) &ram[0] || registers.pc >= (uint64_t) &ram[RAM_SIZE]) {
+        printf("Congrats on the segfault!\n");
+        printf("Tried to access an instruction outside of ram\n");
+    }
+    printf("--> %p, %p, %lx\n\n", &ram[0], &ram[registers.pc], registers.pc);
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
+    printf("\n\n%d, %d, %d, %d, %ld, %p, %p\n\n\n", raw_instruction.ins.opcode, raw_instruction.ins.regA, raw_instruction.ins.regB, raw_instruction.ins.val, raw_instruction.raw, op_AND_SRC_IMM, instruction_table[raw_instruction.ins.opcode]);
     instruction_table[raw_instruction.ins.opcode]();// I/O is a bit special, but I just put it in here
 }
 
@@ -58,6 +66,11 @@ size_t load_file_to_ram(const char *filename) {
 
     // Read up to RAM_SIZE bytes
     size_t bytes_read = fread(ram, 1, RAM_SIZE, file);
+    printf("reading from %s:", filename);
+    for (uint8_t i=0;i<64;i++) {
+        printf("%d ", ram[i]);
+        if ((i % 4) == 0) printf("\n");
+    }
 
     if (ferror(file)) {
         perror("fread");
@@ -69,6 +82,7 @@ size_t load_file_to_ram(const char *filename) {
     return bytes_read;
 }
 
+
 int debug() {
     // TODO: latere I'll implement a lot larger debug mode, but for now just step, print registers, and 
     // adding a full on GDB isn't absolutely crazy hard. For now just print a list of addresses for the functions, expand it later
@@ -76,10 +90,10 @@ int debug() {
     // I think I want a couple levels of debuging, one for later is more for debugging C, and I want to be able to place anything in any register.
     
     printf(".");
-    char cmd = fgetchar();
+    char cmd = getchar();
     switch(cmd) {
         case 'P':
-            printf("PC: %016p, SP: %016p, status: %016lx, Res:%016lx\n", registers.pc, registers.sp, registers.status, registers.res);
+            printf("PC: %016lx, SP: %016lx, status: %016lx, Res:%016lx\n", registers.pc, registers.sp, registers.status, registers.res);
             printf("general purpose registers:");
             for (uint8_t i=0;i<GENERAL_PURPOSE_REGISTER_COUNT;i++) {
                 printf("   gp[%d]: %016lx\n", i, registers.gp[i]);
@@ -106,11 +120,12 @@ int debug() {
             break;
     }
     printf("\n");
+    return 0;
 }
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
-        fprintf(stderr, "Usage: %s <filename>\nProvide the name of a binary file", argv[0]);
+        fprintf(stderr, "Usage: %s <filename>\nProvide the name of a binary file\n", argv[0]);
         return 1;
     }
     bool debug_mode = false;
@@ -130,16 +145,16 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    registers.sp = (uint64_t *)(&ram[0]);
-    registers.pc = (uint64_t *)(&ram[8]);
-
+    registers.sp = (uint64_t)(&ram[0]);
+    registers.pc = (uint64_t)(&ram[8]);
+    
     while (true) {
         if (debug_mode && debug()) break;
 
         // poll the interrupts
         // do them one after the other
         while (interrupt_signals != 0) {
-            executeInterrupt();// call the right interrupt handler
+            executeInterrupts();// call the right interrupt handler
         }
 
         execute();

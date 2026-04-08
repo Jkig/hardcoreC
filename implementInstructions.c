@@ -2,20 +2,17 @@
 #include "implementInstructions.h"
 #include "ISADef.h"
 #include <stdint.h>
+#include <stdio.h>
 #include <stddef.h>
+#include <string.h>
 
 
 // External globals
 extern uint64_t program_state;
-extern uint64_t program_return = 0;
+extern uint64_t program_return;
 extern Registers registers;
 extern uint8_t ram[RAM_SIZE];
 
-
-// Globals
-instruction instruction_table[ISA_COUNT] = {
-    // Just copy in from Opcode definition, and swap place by place with the op_INSTRUCTION_var
-};
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -36,7 +33,7 @@ uint64_t *get_register_ptr(uint8_t reg_id) {
         case REG_SP:        return &registers.sp;
         case REG_RES:       return &registers.res;
         case REG_STATUS:    return &registers.status;
-        default:            return &registers.gp[reg_id - GP_REGISTER_OFFSET];
+        default:            return &registers.gp[reg_id - GP_REGISTERS_OFFSET];
     }
 }
 
@@ -49,7 +46,7 @@ int get_register_id(uint64_t *reg_ptr) {
 
     if (reg_ptr >= &registers.gp[0] &&
         reg_ptr <  &registers.gp[GENERAL_PURPOSE_REGISTER_COUNT]) {
-        return GP_REGISTER_OFFSET + (int)(reg_ptr - &registers.gp[0]);
+        return GP_REGISTERS_OFFSET + (int)(reg_ptr - &registers.gp[0]);
     }
 
     return -1;
@@ -83,6 +80,12 @@ int get_register_id(uint64_t *reg_ptr) {
 ////////////////////////////////////////////////////////////////////////////////
 // Operations
 ////////////////////////////////////////////////////////////////////////////////
+
+
+void op_INVALID() {
+
+};
+
 
 void op_NOOP() {
     registers.pc += sizeof(Instruction);
@@ -272,6 +275,7 @@ void op_RSH_SRC_IMM() {
 }
 
 void op_AND_SRC_SRC() {
+    printf("execute:\n");
     FETCH_3REGS(dst, srcA, srcB, val);
 
     *dst = *srcA & *srcB;
@@ -280,6 +284,7 @@ void op_AND_SRC_SRC() {
 }
 
 void op_AND_SRC_IMM() {
+    printf("execute:\n");
     FETCH_2REGS(dst, src, val);
 
     *dst = *src & val;
@@ -329,9 +334,57 @@ void op_XOR_SRC_IMM() {
     registers.pc += sizeof(Instruction);
 }
 
-void JMP() {
-    *pc = addr;
+void op_JMP() {
+    // *pc = addr;
 }
+
+void op_LOAD() {
+    
+}
+
+void op_STORE() {
+    // *pc = addr;
+}
+
+void op_CMP() {
+    // *pc = addr;
+}
+
+// Globals
+instruction instruction_table[ISA_COUNT] = {
+    // Just copy in from Opcode definition, and swap place by place with the op_INSTRUCTION_var
+    op_INVALID,
+    op_NOOP,
+    op_LOAD,
+    op_STORE,
+    op_JMP,
+    op_CMP,
+
+    op_MOV_REG,
+    op_MOV_IMM_TO_LO,
+    op_MOV_IMM_TO_HI,
+
+    op_ADD_SRC_SRC,
+    op_ADD_SRC_IMM,
+    op_SUB_SRC_SRC,
+    op_SUB_SRC_IMM,
+    op_MUL_SRC_SRC,
+    op_MUL_SRC_IMM,
+    op_DIV_SRC_SRC,
+    op_DIV_SRC_IMM,
+    op_MOD_SRC_SRC,
+    op_MOD_SRC_IMM,
+    op_LSH_SRC_SRC,
+    op_LSH_SRC_IMM,
+    op_RSH_SRC_SRC,
+    op_RSH_SRC_IMM,
+    op_AND_SRC_SRC,
+    op_ADD_SRC_IMM,
+    op_OR_SRC_SRC,
+    op_OR_SRC_IMM,
+    op_XOR_SRC_SRC,
+    op_XOR_SRC_IMM,
+};
 
 
 /* Notes
