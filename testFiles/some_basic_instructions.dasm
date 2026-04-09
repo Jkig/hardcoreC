@@ -1,0 +1,5 @@
+	mov gp4, 9
+	mov gp2, 97
+	add gp1, gp2, gp4
+	mov gp2, gp1
+	mul gp1, gp2, 13

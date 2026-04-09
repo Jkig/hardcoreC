@@ -4,8 +4,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "binaryDef.h"
 #include "ISADef.h"
 #include "processor.h"
+
+#define MAX_ASM_LINE_LENGTH 64
 
 
 typedef struct {
@@ -198,7 +201,7 @@ Instruction build_one_binary_instruction(const char *line) {
         
         return res;
     }
-    printf("Nothing done, opcode not found\n");
+    printf("Nothing done, opcode not found, line: %s\n", line);
     return invalid_res;
 }
 
@@ -207,45 +210,40 @@ void print_instruction(Instruction sample) {
 }
 
 
+void assemble(const char *input_file, const char *output_file) {
+    FILE *dasm = fopen(input_file, "r");
+    FILE *binary = fopen(output_file, "wb");
+
+    // To start, super limited version
+    uint64_t placeholder = sizeof(uint64_t) * 100; // I'm using the stack yet, but I'll put it far out
+    fwrite(&placeholder, sizeof(uint64_t), 1, binary);
+
+    placeholder = sizeof(uint64_t) * INTERUPT_COUNT + 1; // hardcode _start right after vector table, and have reset vector point there
+    fwrite(&placeholder, sizeof(uint64_t), 1, binary);
+
+    placeholder = 0; // clear out the rest of the vector table
+    for (uint8_t i=0;i<INTERUPT_COUNT-1;i++)
+        fwrite(&placeholder, sizeof(uint64_t), 1, binary);
+
+    // Start writing after vector table, I'm hardcoding start to go here.
+    char line[MAX_ASM_LINE_LENGTH];
+    InstructionBits full = {0};
+    while (fgets(line, sizeof(line), dasm)) {
+        line[strcspn(line, "\n")] = '\0';
+        if (strnlen(line, MAX_ASM_LINE_LENGTH) < 2)// not just \n
+            continue;
+        
+        full.ins = build_one_binary_instruction(line);
+        fwrite(&full.ins, sizeof(uint64_t), 1, binary);
+    }
+
+    fclose(dasm);
+    fclose(binary);
+}
+
 
 int main(int argc, char *argv[]) {
-    InstructionBits full = {0};
-    /*
-    sample = build_one_binary_instruction("\tmov gp1, 1234");
-    printf("0x%016llx\n", sample);
-    sample = build_one_binary_instruction("\tmov gp1, gp2");
-    printf("0x%016llx\n", sample);
-    */
-    
-    // First value is whatever, I won't use SP.
-    // second points to address of start, then it goes on from there
-    // I'll have it point to the start, and just run one instruciton
-
-    FILE *f = fopen("output.bin", "wb");
-    full.ins = build_one_binary_instruction("\tmov gp4, 9");
-    fwrite(&full.ins, sizeof(uint64_t), 1, f);
-    full.ins = build_one_binary_instruction("\tadd gp1, gp4, 17");
-    fwrite(&full.ins, sizeof(uint64_t), 1, f);
-
-    uint64_t zero  = 0;
-    fwrite(&zero, sizeof(uint64_t), 1, f);
-
-    fclose(f);
-
-
-
-    return 0;
-
-    full.ins = build_one_binary_instruction("\tadd gp1, gp2, gp3");
-    printf("0x%016lx\n", full.raw);
-    print_instruction(full.ins);
-    full.ins = build_one_binary_instruction("\tmul gp1, gp2, 305813115");
-    printf("0x%016lx\n", full.raw);
-    print_instruction(full.ins);
-    return 0;
-
-
-    // Goes from .sasm (Derek's assembly) file to a binary file
+    // Goes from .dasm (Derek's assembly) file to a binary file
     // take a file name etc..
     const char *input_file = NULL;
     const char *output_file = NULL;
@@ -254,7 +252,6 @@ int main(int argc, char *argv[]) {
 
     while (i < argc) {
         char *arg = argv[i];
-        printf("%s\n", arg);
 
         if (strcmp(arg, "-o") == 0) {
             i++;
@@ -283,6 +280,8 @@ int main(int argc, char *argv[]) {
                output_file ? output_file : "NULL");
         return 1;
     }
+
+    assemble(input_file, output_file);
 
     return 0;
 }
