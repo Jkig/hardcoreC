@@ -1,14 +1,16 @@
 // this isn't too bad
 //64 bit architecture
-#include "processor.h"
-#include "implementInstructions.h"
-#include "ISADef.h"
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdalign.h>
 #include <string.h>
+
+#include "binaryDef.h"
+#include "implementInstructions.h"
+#include "ISADef.h"
+#include "processor.h"
 
 // I'll only have 2 real syscalls, in/out, this program can catch them, in and out through the console that I'm actually using
 // Could trigger interrupts manually from annother thread later
@@ -34,7 +36,7 @@ void executeInterrupts() {
     // Set up for the context switch, I don't have to do it in .dasm, "the hardware does it"
     // Just dump the registers on the stack and restore, its actually easier than normal
 
-    for (uint8_t voffset=0; voffset<64;voffset++) {
+    for (uint8_t voffset=0; voffset<INTERUPT_COUNT;voffset++) {
         while (interrupt_signals & (1 << voffset) != 0) // its the interrupts job to disable itself?
             registers.pc = vtable_start[voffset];
         // then execute until it returns? this still needs work
@@ -48,10 +50,9 @@ void execute() {
         printf("Congrats on the segfault!\n");
         printf("Tried to access an instruction outside of ram\n");
     }
-    printf("pc: %lu\n", registers.pc);
-    printf("--> %p, %p, %lx\n\n", &ram[0], &ram[registers.pc], registers.pc);
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
-    printf("\n\n%d, %d, %d, %d, %ld, %p, %p\n\n\n", raw_instruction.ins.opcode, raw_instruction.ins.regA, raw_instruction.ins.regB, raw_instruction.ins.val, raw_instruction.raw, op_AND_SRC_IMM, instruction_table[raw_instruction.ins.opcode]);
+    printf("Instruction: %ld\n", raw_instruction.raw);
+    printf("\t Opcode: %d\t val: %d\n\t regA:%d\t regB:%d\n\n\n", raw_instruction.ins.opcode, raw_instruction.ins.val, raw_instruction.ins.regA, raw_instruction.ins.regB);
     instruction_table[raw_instruction.ins.opcode]();// I/O is a bit special, but I just put it in here
 }
 
@@ -93,9 +94,10 @@ int debug() {
     switch(cmd) {
         case 'P':
             printf("PC: 0x%016lx, SP: 0x%016lx, status: 0x%016lx, Res: 0x%016lx\n", registers.pc, registers.sp, registers.status, registers.res);
-            printf("general purpose registers:\n");
             for (uint8_t i=0;i<GENERAL_PURPOSE_REGISTER_COUNT;i++) {
-                printf("   gp[%d]:\t0x%016lx\n", i, registers.gp[i]);
+                printf("\tgp[%d]:\t0x%016lx", i, registers.gp[i]);
+                if ((i+1) % 2) printf("\t");
+                else (printf("\n"));
             }
             printf("\n");
             break;
@@ -145,8 +147,7 @@ int main(int argc, char *argv[]) {
     }
     
     memcpy(&registers.sp, &ram[0], sizeof(uint64_t));
-    // memcpy(&registers.pc, (uint8_t*) ((uint64_t *) &ram[0]) + 1, sizeof(uint64_t));
-    // TODO: I'm leaving it as 0 to just run the first instruction.
+    memcpy(&registers.pc, &ram[sizeof(uint64_t)], sizeof(uint64_t));
 
 
     while (true) {
