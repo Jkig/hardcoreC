@@ -51,3 +51,6 @@ gcc Assembler.c -o assembler
 ## Processor/ emulator/ debugger program
 gcc processor.c implementInstructions.c -o proc
 
+## run:
+./assembler testFiles/some_basic_instructions.dasm -o output
+./proc output --debug # then I like P <enter> to see the registers
