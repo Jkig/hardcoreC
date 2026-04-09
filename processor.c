@@ -66,11 +66,6 @@ size_t load_file_to_ram(const char *filename) {
 
     // Read up to RAM_SIZE bytes
     size_t bytes_read = fread(ram, 1, RAM_SIZE, file);
-    printf("reading from %s:\n", filename);
-    for (uint8_t i=0;i<64;i++) {
-        printf("%d ", ram[i]);
-        if (((i+1) % 8) == 0) printf("\n");
-    }
 
     if (ferror(file)) {
         perror("fread");

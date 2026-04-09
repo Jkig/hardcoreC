@@ -195,7 +195,7 @@ Instruction build_one_binary_instruction(const char *line) {
             // TODO: either add mov HI, or split it in a few chunks. Right now just MOV_LO
             res.val = atoi(elements.arg2);// TODO: bounds check, own func...
         } else {
-            res.regC = get_reg_number(elements.arg2);
+            res.regB = get_reg_number(elements.arg2);
         }
         res.opcode = opcode;
         
@@ -218,7 +218,7 @@ void assemble(const char *input_file, const char *output_file) {
     uint64_t placeholder = sizeof(uint64_t) * 100; // I'm using the stack yet, but I'll put it far out
     fwrite(&placeholder, sizeof(uint64_t), 1, binary);
 
-    placeholder = sizeof(uint64_t) * INTERUPT_COUNT + 1; // hardcode _start right after vector table, and have reset vector point there
+    placeholder = sizeof(uint64_t) * (INTERUPT_COUNT + 1); // hardcode _start right after vector table, and have reset vector point there
     fwrite(&placeholder, sizeof(uint64_t), 1, binary);
 
     placeholder = 0; // clear out the rest of the vector table

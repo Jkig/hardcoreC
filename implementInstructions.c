@@ -94,6 +94,7 @@ void op_NOOP() {
 }
 
 void op_MOV_REG() {
+    printf("%s: exec\n", __func__);
     InstructionBits raw_instruction = {0};
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
     uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
@@ -145,6 +146,7 @@ void op_MOV_IMM_TO_HI() {
 }
 
 void op_ADD_SRC_SRC() {
+    printf("%s: exec\n", __func__);
     FETCH_3REGS(dst, srcA, srcB, val);
 
     *dst = *srcA + *srcB;
@@ -153,6 +155,7 @@ void op_ADD_SRC_SRC() {
 }
 
 void op_ADD_SRC_IMM() {
+    printf("%s: exec\n", __func__);
     FETCH_2REGS(dst, src, val);
 
     *dst = *src + val;
@@ -278,7 +281,6 @@ void op_RSH_SRC_IMM() {
 }
 
 void op_AND_SRC_SRC() {
-    printf("execute:\n");
     FETCH_3REGS(dst, srcA, srcB, val);
 
     *dst = *srcA & *srcB;
@@ -287,7 +289,6 @@ void op_AND_SRC_SRC() {
 }
 
 void op_AND_SRC_IMM() {
-    printf("execute:\n");
     FETCH_2REGS(dst, src, val);
 
     *dst = *src & val;
