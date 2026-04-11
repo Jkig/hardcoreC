@@ -15,14 +15,15 @@ write some specs out, then they can expend in the future, separate the notes fro
 I want to be able to run automated tests on all the files in the test programs, same C source file is compiled by gcc and ran on my PC, then Derek compiled (by my compiler, which is a c file compiled by gcc, then ran on my processor). Run a leetcode problem, maybe solve sudoku, diff mine vs standard?
 
 ## To keep it simple
-* Maybe all variables are at the start of the function?
-* Basically no optimisation.
+* All variables are at the start of the function?
+* No optimisations.
 - Only one C file in, only one dasm out of compiler, only one binary file from that, ran by itself.
-- I'll implement a limited version of c
 
 ### Whats not included in my C
 - heap
 - Main can't take parameters
+- All statements need {} (no `if (something) printf("wow\n");`)
+- No formatted strings in printf
 - any stdlib except for stdint/stdbool, and a bit of sdtio
 - many of the keywords - (if I can make this work, I could spend a ton of time and implement the rest, I probably won't care to. What am I going to learn implementing switch that I didn't learn implementing while)
 
