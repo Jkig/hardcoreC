@@ -60,14 +60,14 @@ int lookup_value(const StringToInt *table, size_t count, const char *key, uint8_
 void parse_line(const char *line, InstructionStrings *inst) {
     memset(inst, 0, sizeof(InstructionStrings));
 
-    if (line[0] != '\t') {
+    if (line[0] != '\t' && line[0] != '>') {
         printf("shouldn't have seen a line that wasn't starting with \\t in this function\n");
         return;
     }
 
     const char *p = line;
 
-    while (*p == ' ' || *p == '\t') p++;
+    while (*p == ' ' || *p == '\t' || *p == '>') p++;
 
     char *fields[5] = {
         inst->op,

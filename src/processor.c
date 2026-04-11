@@ -30,6 +30,16 @@ ProgramState program_state = NOT_STARTED;// TODO: Is this needed?
 uint64_t program_return = 0;
 
 
+
+void print_regs() {
+    printf("PC: 0x%016lx, SP: 0x%016lx, status: 0x%016lx, Res: 0x%016lx\n", registers.pc, registers.sp, registers.status, registers.res);
+    for (uint8_t i=0;i<GENERAL_PURPOSE_REGISTER_COUNT/2;i++) {// I don't need to see everything
+        printf("\tgp[%d]:\t0x%016lx\t%ld\n", i, registers.gp[i], registers.gp[i]);
+    }
+    printf("\n");
+}
+
+
 void executeInterrupts() {
     // lowest will be highest priority if there are multiple, so lowest address in the vector table first
     // Its a bare metal program, so the user gets to define the interrupts, but I have to do the work to context switch here (like hardware would)
@@ -52,8 +62,7 @@ void execute() {
         printf("Tried to access an instruction outside of ram\n");
     }
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
-    printf("Instruction: %ld\n", raw_instruction.raw);
-    printf("\t Opcode: %d\t val: %d\n\t regA:%d\t regB:%d\n\n\n", raw_instruction.ins.opcode, raw_instruction.ins.val, raw_instruction.ins.regA, raw_instruction.ins.regB);
+    print_instruction(raw_instruction.ins);
     instruction_table[raw_instruction.ins.opcode]();// I/O is a bit special, but I just put it in here
 }
 
@@ -78,13 +87,6 @@ size_t load_file_to_ram(const char *filename) {
     return bytes_read;
 }
 
-void print_regs() {
-    printf("PC: 0x%016lx, SP: 0x%016lx, status: 0x%016lx, Res: 0x%016lx\n", registers.pc, registers.sp, registers.status, registers.res);
-    for (uint8_t i=0;i<GENERAL_PURPOSE_REGISTER_COUNT/2;i++) {// I don't need to see everything
-        printf("\tgp[%d]:\t0x%016lx\t%ld\n", i, registers.gp[i], registers.gp[i]);
-    }
-    printf("\n");
-}
 
 int debug(bool allow_dasm) {
     // TODO: latere I'll implement a lot larger debug mode, but for now just step, print registers, and 
@@ -93,7 +95,11 @@ int debug(bool allow_dasm) {
     // I think I want a couple levels of debuging, one for later is more for debugging C, and I want to be able to place anything in any register.
     
     printf(".");
-    char cmd = getchar();
+    int cmd;
+    do {
+        cmd = getchar();
+    } while (cmd == '\n' || cmd == '\r');
+
     switch(cmd) {
         case 'P':
             print_regs();
@@ -123,8 +129,7 @@ int debug(bool allow_dasm) {
             char c;
             int i = 0;
             char dasm_cmd[MAX_ASM_LINE_LENGTH] = {0};
-
-            while ((c = getchar()) != EOF) {
+            while ((c = getchar()) != '\n' && c != EOF) {
                 if (i < MAX_ASM_LINE_LENGTH - 1) {
                     dasm_cmd[i++] = (char)c;
                 }
@@ -138,7 +143,8 @@ int debug(bool allow_dasm) {
             }
 
             registers.pc = 0;
-            ram[registers.pc] = next_instruction.raw;
+            memcpy(&ram[registers.pc], &next_instruction.raw, sizeof(Instruction));
+            break;
         default:
             break;
     }
@@ -168,19 +174,19 @@ int main(int argc, char *argv[]) {
     }
 
     size_t loaded = load_file_to_ram(argv[1]);
-    if (loaded == 0) {
+    if (loaded == 0 && !dasm_interpereter) {
         fprintf(stderr, "Failed to load file into RAM\nEmpty binary file or read error\n");
         return 1;
     }
-    
+
     memcpy(&registers.sp, &ram[0], sizeof(uint64_t));
     memcpy(&registers.pc, &ram[sizeof(uint64_t)], sizeof(uint64_t));
 
     if (dasm_interpereter) {
         while (true) {
             // No interrupts, I wouldn't care to do that while running dasm directly
-            print_regs();
             debug(true);
+            execute();
         }
     } else {
         while (true) {
