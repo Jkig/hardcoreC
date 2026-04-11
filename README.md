@@ -21,11 +21,10 @@ I want to be able to run automated tests on all the files in the test programs, 
 - I'll implement a limited version of c
 
 ### Whats not included in my C
-- Any static
-- goto
 - heap
-- Main can't take parameters ofc
-- any stdlib except for stdint for now
+- Main can't take parameters
+- any stdlib except for stdint/stdbool, and a bit of sdtio
+- many of the keywords - (if I can make this work, I could spend a ton of time and implement the rest, I probably won't care to. What am I going to learn implementing switch that I didn't learn implementing while)
 
 ### Limitations in my ASM
 - All imediate values are decimal

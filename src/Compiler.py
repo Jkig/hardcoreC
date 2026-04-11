@@ -11,6 +11,28 @@ class ASTNode:
         # TODO: Is the easiest way to build the code here after I've built the AST?
 
 
+unused_keywords = {
+    "break",
+    "case",
+    "continue",
+    "const",
+    "do",
+    "double",
+    "enum",
+    "extern",
+    "float",
+    "for",
+    "signed",
+    "sizeof",
+    "static",
+    "struct",
+    "switch",
+    "unsigned",
+    "union",
+    "void",
+    "volatile",
+}
+
 
 def tokenize_file(input_filename, output_filename):
     try:
@@ -224,16 +246,40 @@ def compile(file_name: str, output_file_name: str, skip_cleanup: bool):
     with open(tokenized_file_name, "r") as f:
         content = f.read()
 
-    if "static " in content:
-        print("static found, not supported yet")
+    all_content = set(content.split())
+    non_implemented_keywords = False
+    for keyword in unused_keywords:
+        if keyword in all_content:
+            non_implemented_keywords = True
+            print(f"Found {keyword} in program, not implemented yet!")
 
-    content = content.replace("static ", "")
+    if non_implemented_keywords:
+        return
+
+    # strip and replace a bunch of stuff
+    content = content.replace("true ", "1 ")
+    content = content.replace("false ", "0 ")
+
+    content = content.replace("unsigned long long ", "uint64_t ")
+    content = content.replace("long long ", "int64_t ")
+    content = content.replace("unsigned long ", "int32_t ")
+    content = content.replace("long ", "int32_t ")
+    content = content.replace("unsigned short ", "uint16_t ")
+    content = content.replace("short ", "int16_t ")
+    content = content.replace("unsigned char ", "uint8_t ")
+    content = content.replace("char ", "int8_t ")
+    content = content.replace("bool ", "uint8_t ")
+
+    content = content.replace("int main ", "start_function_int_main ")
+    content = content.replace("unsigned int ", "uint32_t ")
+    content = content.replace("int ", "int32_t ")
+    content = content.replace("start_function_int_main ", "int main ")
 
     with open(tokenized_file_name, "w") as f:
         f.write(content)
 
     root_node = None
-    try :
+    try:
         root_node = build_AST(tokenized_file_name)
     except Exception as e:
         print(f"Error building AST: {e}")
