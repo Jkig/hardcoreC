@@ -21,3 +21,8 @@ Order of operations to implement the c language in
 function calls
 - I can be very inneficient, even thinking of it like a psudo context switch, always easier to optimize something that exists.
 	- variables are byte offsets/ sizes from the top of the stack???? IDK
+    - think about to go to and return from a function, I don't think it's too bad
+	- chop the end of the stack off
+	- I think there is one instruction for going to a funciton, the rest of the set up in inserted first, function calls don't exist in dasm
+	- jump back to the earlier instruction, only one return value, so  returns are just updating some registers…
+	- Set aside some registers to only do this??? still call them gp?

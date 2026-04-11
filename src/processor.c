@@ -23,8 +23,8 @@ extern instruction instruction_table[ISA_COUNT];
 
 // Globals
 Registers registers;
-volatile uint64_t interrupt_signals;    // bit field
 alignas(8) uint8_t ram[RAM_SIZE];
+volatile uint64_t interrupt_signals;    // bit field
 uint64_t *vtable_start = (uint64_t *) (uint64_t) &ram[8];
 ProgramState program_state = NOT_STARTED;// TODO: Is this needed?
 uint64_t program_return = 0;
@@ -48,8 +48,14 @@ void executeInterrupts() {
     // Just dump the registers on the stack and restore, its actually easier than normal
 
     for (uint8_t voffset=0; voffset<INTERUPT_COUNT;voffset++) {
-        while (interrupt_signals & (1 << voffset) != 0) // its the interrupts job to disable itself?
-            registers.pc = vtable_start[voffset];
+        while (interrupt_signals & (1 << voffset) != 0) {
+            interrupt_signals &= ~(1 << voffset);// Turn off the interrupt that triggered this, move this into the interrupt implementetion if its ever needed to not happen
+            if (voffset <= SYSTICK)
+                registers.pc = vtable_start[voffset]; // bare metal interrupts, allow programmer to specify
+            else
+                interrupt();// OS would catch these, but right now I'm implemeintg them in a way that feels like hw?
+            // Technically this means I've left most of the vector table unreachable, that's fine, I have way more interrupts than I need
+        }
         // then execute until it returns? this still needs work
     }
     // Switch context back
@@ -165,6 +171,7 @@ int main(int argc, char *argv[]) {
         if (strcmp(argv[2], "--debug") == 0) {
             debug_mode = true;
         } else if (strcmp(argv[2], "--dasm") == 0) {
+            debug_mode = true;
             dasm_interpereter = true;
         } else {
             fprintf(stderr, "Unknown option: %s\n", argv[2]);
@@ -182,21 +189,13 @@ int main(int argc, char *argv[]) {
     memcpy(&registers.sp, &ram[0], sizeof(uint64_t));
     memcpy(&registers.pc, &ram[sizeof(uint64_t)], sizeof(uint64_t));
 
-    if (dasm_interpereter) {
-        while (true) {
-            // No interrupts, I wouldn't care to do that while running dasm directly
-            debug(true);
-            execute();
-        }
-    } else {
-        while (true) {
-            if (debug_mode && debug(false)) break;
+    while (true) {
+        if (debug_mode && debug(dasm_interpereter)) break;
 
-            while (interrupt_signals != 0) executeInterrupts();
+        while (interrupt_signals != 0) executeInterrupts();
 
-            execute();
-            // if (program_state != 1) break;
-        }
+        execute();
+        // if (program_state != 1) break;
     }
 
     /* Give me a chance to explore after program stops

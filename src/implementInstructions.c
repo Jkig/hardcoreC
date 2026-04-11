@@ -11,6 +11,7 @@
 extern uint64_t program_state;
 extern uint64_t program_return;
 extern Registers registers;
+extern volatile uint64_t interrupt_signals;    // bit field
 extern uint8_t ram[RAM_SIZE];
 
 
@@ -92,6 +93,8 @@ void op_INVALID() {
 void op_NOOP() {
     registers.pc += sizeof(Instruction);
 }
+
+// TODO: op_TRUE_NOOP_SPIN -> needs interrupt to escape, same as op_INVALID, empty
 
 void op_MOV_REG() {
     printf("%s: exec\n", __func__);
@@ -351,6 +354,32 @@ void op_STORE() {
 }
 
 void op_CMP() {
+    registers.pc += sizeof(Instruction);
+}
+
+void op_SW_INTERUPT() {
+    printf("%s: exec\n", __func__);
+    InstructionBits raw_instruction = {0};
+    memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
+
+    /// interrupt_no is a register holding the value for the interrupt to trigger from software
+    uint64_t *interrupt_no = get_register_ptr(raw_instruction.ins.regA);
+
+    if (!interrupt_no) {
+        printf("%s, Failure, NULL register\n", __func__);
+        registers.pc += sizeof(Instruction);
+        return;
+    }
+
+    if (*interrupt_no < SOFTWARE_INTERRUPT_HI_0 || SOFTWARE_INTERRUPT_LOW_3 < *interrupt_no) {
+        printf("%s, This is an invalid interrupt, can't trigger %d from software\n", __func__, *interrupt_no);
+        registers.pc += sizeof(Instruction);
+        return;
+    }
+
+    interrupt_signals |= (1 << *interrupt_no);
+
+
     registers.pc += sizeof(Instruction);
 }
 

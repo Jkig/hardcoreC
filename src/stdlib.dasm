@@ -4,6 +4,8 @@
 ; I'll implement stdin/out here
 
 _start:
+	initialize other register to 0
+	intitialize all interrupts to 0
     ; setup registers from binary
     
     run main;

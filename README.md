@@ -37,6 +37,7 @@ I want to be able to run automated tests on all the files in the test programs, 
 - opcode definition?
 - is an ast for all potential jumps? just functions, or something else?
 - start with sample ASM files, and test manually -> the simple assembler
+- https://developer.arm.com/documentation/dui0231/b/arm-instruction-reference
 
 # Potential fun notes, not needed
 ### potential mistakes
@@ -49,7 +50,7 @@ I'll have different variations as different core instruciotns, not a few bits fo
 gcc Assembler.c Assembler_helpers.c -o assembler
 
 ## Processor/ emulator/ debugger program
-gcc processor.c implementInstructions.c Assembler_helpers.c -o proc
+gcc processor.c implementInstructions.c Assembler_helpers.c os_like_stuff.c -o proc
 
 ## run:
 ./assembler testFiles/some_basic_instructions.dasm -o output
