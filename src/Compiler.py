@@ -35,6 +35,8 @@ unused_keywords = {
 
 
 def tokenize_file(input_filename, output_filename):
+    # this function is largely GPT written, anyone can do this
+
     try:
         input_file = open(input_filename, "r")
     except IOError:

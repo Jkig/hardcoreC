@@ -7,6 +7,7 @@
 #include <stdalign.h>
 #include <string.h>
 
+#include "Assembler.h"
 #include "binaryDef.h"
 #include "implementInstructions.h"
 #include "ISADef.h"
@@ -77,8 +78,15 @@ size_t load_file_to_ram(const char *filename) {
     return bytes_read;
 }
 
+void print_regs() {
+    printf("PC: 0x%016lx, SP: 0x%016lx, status: 0x%016lx, Res: 0x%016lx\n", registers.pc, registers.sp, registers.status, registers.res);
+    for (uint8_t i=0;i<GENERAL_PURPOSE_REGISTER_COUNT/2;i++) {// I don't need to see everything
+        printf("\tgp[%d]:\t0x%016lx\t%ld\n", i, registers.gp[i], registers.gp[i]);
+    }
+    printf("\n");
+}
 
-int debug() {
+int debug(bool allow_dasm) {
     // TODO: latere I'll implement a lot larger debug mode, but for now just step, print registers, and 
     // adding a full on GDB isn't absolutely crazy hard. For now just print a list of addresses for the functions, expand it later
     
@@ -88,13 +96,7 @@ int debug() {
     char cmd = getchar();
     switch(cmd) {
         case 'P':
-            printf("PC: 0x%016lx, SP: 0x%016lx, status: 0x%016lx, Res: 0x%016lx\n", registers.pc, registers.sp, registers.status, registers.res);
-            for (uint8_t i=0;i<GENERAL_PURPOSE_REGISTER_COUNT;i++) {
-                printf("\tgp[%d]:\t0x%016lx", i, registers.gp[i]);
-                if ((i+1) % 2) printf("\t");
-                else (printf("\n"));
-            }
-            printf("\n");
+            print_regs();
             break;
         case 'p':
             // read address from user and print the contents of that address in RAM
@@ -112,6 +114,31 @@ int debug() {
         case 'k':
             // terminate program
             return -1;
+        case '>':
+            if (!allow_dasm) {
+                printf("not allowed to run dasm right now\n");
+                break;
+            }
+
+            char c;
+            int i = 0;
+            char dasm_cmd[MAX_ASM_LINE_LENGTH] = {0};
+
+            while ((c = getchar()) != EOF) {
+                if (i < MAX_ASM_LINE_LENGTH - 1) {
+                    dasm_cmd[i++] = (char)c;
+                }
+            }
+
+            InstructionBits next_instruction = {0};
+            next_instruction.ins = build_one_binary_instruction(&dasm_cmd[0]);
+            if (next_instruction.raw == 0) {
+                printf("Invalid command\n");
+                break;
+            }
+
+            registers.pc = 0;
+            ram[registers.pc] = next_instruction.raw;
         default:
             break;
     }
@@ -119,15 +146,20 @@ int debug() {
     return 0;
 }
 
+
 int main(int argc, char *argv[]) {
     if (argc < 2) {
         fprintf(stderr, "Usage: %s <filename>\nProvide the name of a binary file\n", argv[0]);
         return 1;
     }
+
     bool debug_mode = false;
+    bool dasm_interpereter = false;
     if (argc > 2) {
         if (strcmp(argv[2], "--debug") == 0) {
             debug_mode = true;
+        } else if (strcmp(argv[2], "--dasm") == 0) {
+            dasm_interpereter = true;
         } else {
             fprintf(stderr, "Unknown option: %s\n", argv[2]);
             fprintf(stderr, "Usage: %s <filename> [--debug]\nProvide the name of a binary file and optionally enable debug mode", argv[0]);
@@ -144,19 +176,27 @@ int main(int argc, char *argv[]) {
     memcpy(&registers.sp, &ram[0], sizeof(uint64_t));
     memcpy(&registers.pc, &ram[sizeof(uint64_t)], sizeof(uint64_t));
 
+    if (dasm_interpereter) {
+        while (true) {
+            // No interrupts, I wouldn't care to do that while running dasm directly
+            print_regs();
+            debug(true);
+        }
+    } else {
+        while (true) {
+            if (debug_mode && debug(false)) break;
 
-    while (true) {
-        if (debug_mode && debug()) break;
+            while (interrupt_signals != 0) executeInterrupts();
 
-        // poll the interrupts
-        // do them one after the other
-        while (interrupt_signals != 0) executeInterrupts();
-
-        execute();
-        // if (program_state != 1) break;
+            execute();
+            // if (program_state != 1) break;
+        }
     }
+
+    /* Give me a chance to explore after program stops
     while (true) {
-        if (debug()) break;
+        if (debug(false)) break;
     }
+    */
     return program_return;
 }
