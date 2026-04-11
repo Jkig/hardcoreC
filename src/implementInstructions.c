@@ -61,9 +61,9 @@ int get_register_id(uint64_t *reg_ptr) {
     uint64_t *srcA = get_register_ptr(raw_instruction.ins.regB);         \
     uint64_t *srcB = get_register_ptr(raw_instruction.ins.regC);         \
     uint32_t val = raw_instruction.ins.val;                              \
+    registers.pc += sizeof(Instruction);                                 \
     if (!(dst) || !(srcA) || !(srcB)) {                                  \
         printf("%s, Failure, NULL register\n", __func__);                \
-        registers.pc += sizeof(Instruction);                             \
         return;                                                          \
     }
 
@@ -74,9 +74,9 @@ int get_register_id(uint64_t *reg_ptr) {
     uint64_t *dst  = get_register_ptr(raw_instruction.ins.regA);         \
     uint64_t *src = get_register_ptr(raw_instruction.ins.regB);          \
     uint32_t val = raw_instruction.ins.val;                              \
+    registers.pc += sizeof(Instruction);                                 \
     if (!(dst) || !(src)) {                                              \
         printf("%s, Failure, NULL register\n", __func__);                \
-        registers.pc += sizeof(Instruction);                             \
         return;                                                          \
     }
 
@@ -102,15 +102,14 @@ void op_MOV_REG() {
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
     uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
     uint64_t *src = get_register_ptr(raw_instruction.ins.regB);
+    registers.pc += sizeof(Instruction);
 
     if (!dst || !src) {
         printf("%s, Failure, NULL register\n", __func__);
-        registers.pc += sizeof(Instruction);
         return;
     }
 
     *dst = *src;
-    registers.pc += sizeof(Instruction);
 }
 
 void op_MOV_IMM_TO_LO() {
@@ -119,16 +118,15 @@ void op_MOV_IMM_TO_LO() {
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
     uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
     uint32_t val = raw_instruction.ins.val;
+    registers.pc += sizeof(Instruction);
 
     if (!dst) {
         printf("%s, Failure, NULL register\n", __func__);
-        registers.pc += sizeof(Instruction);
         return;
     }
 
     *dst &= 0xFFFFFFFF00000000;
     *dst |= val;
-    registers.pc += sizeof(Instruction);
 }
 
 void op_MOV_IMM_TO_HI() {
@@ -136,16 +134,15 @@ void op_MOV_IMM_TO_HI() {
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
     uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
     uint32_t val = raw_instruction.ins.val;
+    registers.pc += sizeof(Instruction);
 
     if (!dst) {
         printf("%s, Failure, NULL register\n", __func__);
-        registers.pc += sizeof(Instruction);
         return;
     }
 
     *dst &= 0x00000000FFFFFFFF;
     *dst |= val;
-    registers.pc += sizeof(Instruction);
 }
 
 void op_ADD_SRC_SRC() {
@@ -154,16 +151,13 @@ void op_ADD_SRC_SRC() {
 
     *dst = *srcA + *srcB;
     // TODO: Update Status register (beautiful side effects)
-    registers.pc += sizeof(Instruction);
 }
 
 void op_ADD_SRC_IMM() {
-    printf("%s: exec\n", __func__);
     FETCH_2REGS(dst, src, val);
 
     *dst = *src + val;
     // TODO: Update Status register (beautiful side effects)
-    registers.pc += sizeof(Instruction);
 }
 
 
@@ -172,7 +166,6 @@ void op_SUB_SRC_SRC() {
 
     *dst = *srcA - *srcB;
     // TODO: Update Status register (beautiful side effects)
-    registers.pc += sizeof(Instruction);
 }
 
 void op_SUB_SRC_IMM() {
@@ -180,7 +173,6 @@ void op_SUB_SRC_IMM() {
 
     *dst = *src - val;
     // TODO: Update Status register (beautiful side effects)
-    registers.pc += sizeof(Instruction);
 }
 
 void op_MUL_SRC_SRC() {
@@ -188,7 +180,6 @@ void op_MUL_SRC_SRC() {
 
     *dst = *srcA * *srcB;
     // TODO: Update Status register (beautiful side effects)
-    registers.pc += sizeof(Instruction);
 }
 
 void op_MUL_SRC_IMM() {
@@ -196,7 +187,6 @@ void op_MUL_SRC_IMM() {
 
     *dst = *src * val;
     // TODO: Update Status register (beautiful side effects)
-    registers.pc += sizeof(Instruction);
 }
 
 void op_DIV_SRC_SRC() {
@@ -209,7 +199,6 @@ void op_DIV_SRC_SRC() {
         *dst = *srcA / *srcB;
     }
     // TODO: Update Status register (beautiful side effects)
-    registers.pc += sizeof(Instruction);
 }
 
 void op_DIV_SRC_IMM() {
@@ -222,7 +211,6 @@ void op_DIV_SRC_IMM() {
         *dst = *src / val;
     }
     // TODO: Update Status register (beautiful side effects)
-    registers.pc += sizeof(Instruction);
 }
 
 void op_MOD_SRC_SRC() {
@@ -235,7 +223,6 @@ void op_MOD_SRC_SRC() {
         *dst = *srcA % *srcB;
     }
     // TODO: Update Status register (beautiful side effects)
-    registers.pc += sizeof(Instruction);
 }
 
 void op_MOD_SRC_IMM() {
@@ -248,7 +235,6 @@ void op_MOD_SRC_IMM() {
         *dst = *src % val;
     }
     // TODO: Update Status register (beautiful side effects)
-    registers.pc += sizeof(Instruction);
 }
 
 void op_LSH_SRC_SRC() {
@@ -256,7 +242,6 @@ void op_LSH_SRC_SRC() {
 
     *dst = *srcA << *srcB;
     // TODO: Update Status register (beautiful side effects)
-    registers.pc += sizeof(Instruction);
 }
 
 void op_LSH_SRC_IMM() {
@@ -264,7 +249,6 @@ void op_LSH_SRC_IMM() {
 
     *dst = *src << val;
     // TODO: Update Status register (beautiful side effects)
-    registers.pc += sizeof(Instruction);
 }
 
 void op_RSH_SRC_SRC() {
@@ -272,7 +256,6 @@ void op_RSH_SRC_SRC() {
 
     *dst = *srcA >> *srcB;
     // TODO: Update Status register (beautiful side effects)
-    registers.pc += sizeof(Instruction);
 }
 
 void op_RSH_SRC_IMM() {
@@ -280,7 +263,6 @@ void op_RSH_SRC_IMM() {
 
     *dst = *src >> val;
     // TODO: Update Status register (beautiful side effects)
-    registers.pc += sizeof(Instruction);
 }
 
 void op_AND_SRC_SRC() {
@@ -288,7 +270,6 @@ void op_AND_SRC_SRC() {
 
     *dst = *srcA & *srcB;
     // TODO: Update Status register (beautiful side effects)
-    registers.pc += sizeof(Instruction);
 }
 
 void op_AND_SRC_IMM() {
@@ -296,7 +277,6 @@ void op_AND_SRC_IMM() {
 
     *dst = *src & val;
     // TODO: Update Status register (beautiful side effects)
-    registers.pc += sizeof(Instruction);
 }
 
 void op_OR_SRC_SRC() {
@@ -305,16 +285,15 @@ void op_OR_SRC_SRC() {
     uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
     uint64_t *srcA = get_register_ptr(raw_instruction.ins.regB);
     uint64_t *srcB = get_register_ptr(raw_instruction.ins.regC);
+    registers.pc += sizeof(Instruction);
 
     if (!dst || !srcA  || !srcB) {
         printf("%s, Failure, NULL register\n", __func__);
-        registers.pc += sizeof(Instruction);
         return;
     }
 
     *dst = *srcA | *srcB;
     // TODO: Update Status register (beautiful side effects)
-    registers.pc += sizeof(Instruction);
 }
 
 void op_OR_SRC_IMM() {
@@ -322,7 +301,6 @@ void op_OR_SRC_IMM() {
 
     *dst = *src | val;
     // TODO: Update Status register (beautiful side effects)
-    registers.pc += sizeof(Instruction);
 }
 
 void op_XOR_SRC_SRC() {
@@ -330,7 +308,6 @@ void op_XOR_SRC_SRC() {
 
     *dst = *srcA ^ *srcB;
     // TODO: Update Status register (beautiful side effects)
-    registers.pc += sizeof(Instruction);
 }
 
 void op_XOR_SRC_IMM() {
@@ -338,7 +315,6 @@ void op_XOR_SRC_IMM() {
 
     *dst = *src ^ val;
     // TODO: Update Status register (beautiful side effects)
-    registers.pc += sizeof(Instruction);
 }
 
 void op_JMP() {
@@ -361,26 +337,22 @@ void op_SW_INTERUPT() {
     printf("%s: exec\n", __func__);
     InstructionBits raw_instruction = {0};
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
+    registers.pc += sizeof(Instruction);
 
     /// interrupt_no is a register holding the value for the interrupt to trigger from software
     uint64_t *interrupt_no = get_register_ptr(raw_instruction.ins.regA);
 
     if (!interrupt_no) {
         printf("%s, Failure, NULL register\n", __func__);
-        registers.pc += sizeof(Instruction);
         return;
     }
 
     if (*interrupt_no < SOFTWARE_INTERRUPT_HI_0 || SOFTWARE_INTERRUPT_LOW_3 < *interrupt_no) {
         printf("%s, This is an invalid interrupt, can't trigger %d from software\n", __func__, *interrupt_no);
-        registers.pc += sizeof(Instruction);
         return;
     }
 
     interrupt_signals |= (1 << *interrupt_no);
-
-
-    registers.pc += sizeof(Instruction);
 }
 
 // Globals
