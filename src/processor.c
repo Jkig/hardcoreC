@@ -11,6 +11,7 @@
 #include "binaryDef.h"
 #include "implementInstructions.h"
 #include "ISADef.h"
+#include "os_like_stuff.h"
 #include "processor.h"
 
 // I'll only have 2 real syscalls, in/out, this program can catch them, in and out through the console that I'm actually using
@@ -32,9 +33,9 @@ uint64_t program_return = 0;
 
 
 void print_regs() {
-    printf("PC: 0x%016lx, SP: 0x%016lx, status: 0x%016lx, Res: 0x%016lx\n", registers.pc, registers.sp, registers.status, registers.res);
+    printf("PC: 0x%016llx, SP: 0x%016llx, status: 0x%016llx, Res: 0x%016llx\n", registers.pc, registers.sp, registers.status, registers.res);
     for (uint8_t i=0;i<GENERAL_PURPOSE_REGISTER_COUNT/2;i++) {// I don't need to see everything
-        printf("\tgp[%d]:\t0x%016lx\t%ld\n", i, registers.gp[i], registers.gp[i]);
+        printf("\tgp[%d]:\t0x%016llx\t%lld\n", i, registers.gp[i], registers.gp[i]);
     }
     printf("\n");
 }
@@ -48,12 +49,12 @@ void executeInterrupts() {
     // Just dump the registers on the stack and restore, its actually easier than normal
 
     for (uint8_t voffset=0; voffset<INTERUPT_COUNT;voffset++) {
-        while (interrupt_signals & (1 << voffset) != 0) {
+        while ((interrupt_signals & (1 << voffset)) != 0) {
             interrupt_signals &= ~(1 << voffset);// Turn off the interrupt that triggered this, move this into the interrupt implementetion if its ever needed to not happen
             if (voffset <= SYSTICK)
                 registers.pc = vtable_start[voffset]; // bare metal interrupts, allow programmer to specify
             else
-                interrupt();// OS would catch these, but right now I'm implemeintg them in a way that feels like hw?
+                interrupt(voffset);// OS would catch these, but right now I'm implemeintg them in a way that feels like hw?
             // Technically this means I've left most of the vector table unreachable, that's fine, I have way more interrupts than I need
         }
         // then execute until it returns? this still needs work
@@ -112,10 +113,10 @@ int debug(bool allow_dasm) {
             break;
         case 'p':
             // read address from user and print the contents of that address in RAM
-            uint64_t addr;
             printf("Enter address to print: ");
-            scanf("%lx", &addr);
-            printf("Contents at address %016lx: %016lx\n", addr, *(uint64_t *)(&ram[addr]));
+            uint64_t addr;
+            scanf("%llx", &addr);
+            printf("Contents at address %016llx: %016llx\n", addr, *(uint64_t *)(&ram[addr]));
             break;
         case 's':
             // Step through the next instruction

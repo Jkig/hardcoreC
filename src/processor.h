@@ -80,6 +80,6 @@ typedef enum {
 
 
 #define LAST_REGISTER_BEFORE_GP (GP_REGISTERS_OFFSET - 1)
-static_assert(INTERRUPT_COUNT <= 64);
+static_assert(INTERRUPT_COUNT <= 64, "Too many interrupts");
 
 #endif // EMULATE_PROCESSOR_H

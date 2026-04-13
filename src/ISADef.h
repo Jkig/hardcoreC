@@ -65,9 +65,9 @@ typedef union InstructionBits {
     Instruction ins;
 } InstructionBits;
 
-static_assert(ISA_COUNT < 256);
-static_assert(sizeof(Instruction) == 8);
-static_assert(sizeof(InstructionBits) == 8);
+static_assert(ISA_COUNT < 256, "Too many instructions");
+static_assert(sizeof(Instruction) == 8, "Instruction struct must be 8 bytes");
+static_assert(sizeof(InstructionBits) == 8, "InstructionBits union must be 8 bytes");
 
 
 typedef uint64_t MyStatus;

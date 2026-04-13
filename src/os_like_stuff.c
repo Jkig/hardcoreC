@@ -1,5 +1,6 @@
-#include "processor.h"
 #include "implementInstructions.h"
+#include "os_like_stuff.h"
+#include "processor.h"
 
 #include <stdint.h>
 #include <stdio.h>
@@ -37,7 +38,7 @@ void interrupt(uint8_t interrupt_no) {
         }
     } else if(interrupt_sub_number == WRITE) {
         if (interrupt_auxiliary_info == STD_OUT) {
-            printf("> %s", ram[write_buff]);// hopefully it null termitates lol
+            printf("> %s", &ram[write_buff]);// hopefully it null termitates lol
         }
     } else {
         printf("Not implemented");

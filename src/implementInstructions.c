@@ -348,7 +348,7 @@ void op_SW_INTERUPT() {
     }
 
     if (*interrupt_no < SOFTWARE_INTERRUPT_HI_0 || SOFTWARE_INTERRUPT_LOW_3 < *interrupt_no) {
-        printf("%s, This is an invalid interrupt, can't trigger %d from software\n", __func__, *interrupt_no);
+        printf("%s, This is an invalid interrupt, can't trigger %llu from software\n", __func__, *interrupt_no);
         return;
     }
 
