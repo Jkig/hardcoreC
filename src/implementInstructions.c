@@ -384,7 +384,7 @@ instruction instruction_table[ISA_COUNT] = {
     op_RSH_SRC_SRC,
     op_RSH_SRC_IMM,
     op_AND_SRC_SRC,
-    op_ADD_SRC_IMM,
+    op_AND_SRC_IMM,
     op_OR_SRC_SRC,
     op_OR_SRC_IMM,
     op_XOR_SRC_SRC,
