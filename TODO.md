@@ -34,4 +34,4 @@ function calls
 - Data is similar, swap every reference of it to the data
 - -> how to use types??
 - I think maybe I need readchar?? build the rest out of it?
-- Convert the assembler to c++, every line starting with `'\t'` is a single instruction. set up to replace each thing with the address I'll write it to, which is just the start.
+- Every line starting with `'\t'` is a single instruction. set up to replace each thing with the address I'll write it to, which is just the start.

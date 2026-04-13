@@ -45,6 +45,10 @@ StringToInt arithmetic_instruction_to_opcode[] = {
     {"xor", XOR_SRC_SRC},
 };
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 int lookup_value(const StringToInt *table, size_t count, const char *key, uint8_t *out_value) {
     for (size_t i = 0; i < count; i++) {
         if (strcmp(table[i].key, key) == 0) {
@@ -193,34 +197,6 @@ void print_instruction(Instruction sample) {
     printf("opcode: 0x%04x, A: 0x%04x, B: 0x%04x, C: 0x%04x, Val: 0x%08x\n", sample.opcode, sample.regA, sample.regB, sample.regC, sample.val);
 }
 
-
-void assemble(const char *input_file, const char *output_file) {
-    FILE *dasm = fopen(input_file, "r");
-    FILE *binary = fopen(output_file, "wb");
-
-    // To start, super limited version
-    uint64_t placeholder = sizeof(uint64_t) * 100; // I'm using the stack yet, but I'll put it far out
-    fwrite(&placeholder, sizeof(uint64_t), 1, binary);
-
-    placeholder = sizeof(uint64_t) * (INTERUPT_COUNT + 1); // hardcode _start right after vector table, and have reset vector point there
-    fwrite(&placeholder, sizeof(uint64_t), 1, binary);
-
-    placeholder = 0; // clear out the rest of the vector table
-    for (uint8_t i=0;i<INTERUPT_COUNT-1;i++)
-        fwrite(&placeholder, sizeof(uint64_t), 1, binary);
-
-    // Start writing after vector table, I'm hardcoding start to go here.
-    char line[MAX_ASM_LINE_LENGTH];
-    InstructionBits full = {0};
-    while (fgets(line, sizeof(line), dasm)) {
-        line[strcspn(line, "\n")] = '\0';
-        if (strnlen(line, MAX_ASM_LINE_LENGTH) < 2)// not just \n
-            continue;
-        
-        full.ins = build_one_binary_instruction(line);
-        fwrite(&full.ins, sizeof(uint64_t), 1, binary);
-    }
-
-    fclose(dasm);
-    fclose(binary);
+#ifdef __cplusplus
 }
+#endif

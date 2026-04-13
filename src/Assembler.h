@@ -21,13 +21,6 @@ typedef struct {
     char arg4[MAX_TOKEN];
 } InstructionStrings;
 
-int lookup_value(const StringToInt *, size_t, const char *, uint8_t *);
-void parse_line(const char *line, InstructionStrings *);
-int is_immediate(const char *);
-int get_reg_number(const char *);
-void print_instruction(Instruction);
-Instruction build_one_binary_instruction(const char *);
 void assemble(const char *, const char *);
-
 
 #endif // ASSEMBLER_H

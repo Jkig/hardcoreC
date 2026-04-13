@@ -47,7 +47,7 @@ I'll have different variations as different core instruciotns, not a few bits fo
 
 # Build
 ## Assembler
-gcc Assembler.c Assembler_helpers.c -o assembler
+gcc Assembler.cpp Assembler_helpers.c -o assembler
 
 ## Processor/ emulator/ debugger program
 gcc processor.c implementInstructions.c Assembler_helpers.c os_like_stuff.c -o proc
