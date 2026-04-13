@@ -8,6 +8,7 @@
 #include <string.h>
 
 #include "Assembler.h"
+#include "Assembler_helpers.h"
 #include "binaryDef.h"
 #include "implementInstructions.h"
 #include "ISADef.h"

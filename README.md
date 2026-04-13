@@ -47,10 +47,10 @@ I'll have different variations as different core instruciotns, not a few bits fo
 
 # Build
 ## Assembler
-gcc Assembler.cpp Assembler_helpers.c -o assembler
+gcc src/Assembler.cpp src/Assembler_helpers.c -o assembler
 
 ## Processor/ emulator/ debugger program
-gcc processor.c implementInstructions.c Assembler_helpers.c os_like_stuff.c -o proc
+gcc src/processor.c src/implementInstructions.c src/Assembler_helpers.c src/os_like_stuff.c -o proc
 
 ## run:
 ./assembler testFiles/some_basic_instructions.dasm -o output
