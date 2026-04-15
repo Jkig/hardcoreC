@@ -35,3 +35,5 @@ function calls
 - -> how to use types??
 - I think maybe I need readchar?? build the rest out of it?
 - Every line starting with `'\t'` is a single instruction. set up to replace each thing with the address I'll write it to, which is just the start.
+
+- make an automated way to test these programs,,, on main, make a syscall for argv/argc, then judge prints. all info is taken on argc argv
