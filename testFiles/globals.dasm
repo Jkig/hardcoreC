@@ -1,0 +1,45 @@
+.section .data
+msg:
+	.ascii "Hello, world\n\0"
+
+counter:
+    .word 0
+
+.section .text
+_start:
+	mov gp0, 0
+	mov gp1, 0
+	mov gp2, 0
+	mov gp3, 0
+	mov gp4, 0
+	mov gp5, 0
+	mov gp6, 0
+	mov gp7, 0
+	mov gp8, 0
+	mov gp9, 0
+	mov gp10, 0
+	mov gp11, 0
+	mov gp12, 0
+	mov gp13, 0
+	mov gp14, 0
+	mov gp15, 0
+	mov gp16, 0
+	mov res, 0
+	mov status, 0
+
+	; set up so I can return from main
+	b main
+	; print the end of this, then close, I have the ability to stop the processor from register val, so update it
+	; update program status or something, I should have all starts go to here returning what main returned, and printing some standard message
+
+main:
+	; set up to return from print
+	b print; not sure if this is how I want to do it
+
+print:
+						; prep syscall and send it off
+	mov gp8, 1			; its a read syscall
+	mov gp9, 1			; set the fd (just std_out) 
+	mov gp10, =msg		; set the buffer
+	sysc 16				; SOFTWARE_INTERRUPT_LOW_1
+						; return from print 

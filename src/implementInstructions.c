@@ -355,6 +355,10 @@ void op_SW_INTERUPT() {
     interrupt_signals |= (1 << *interrupt_no);
 }
 
+void branch() {
+
+}
+
 // Globals
 instruction instruction_table[ISA_COUNT] = {
     // Just copy in from Opcode definition, and swap place by place with the op_INSTRUCTION_var
