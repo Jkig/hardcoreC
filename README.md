@@ -1,60 +1,23 @@
 # Sometimes I get the itch to write some of these really cool things
-This isn't a project I'll devote time to, but this is a place I can at least get it thorugh my fingers and move back to productive work. Sometimes these topics capture my interest.
+I wasn't intending to spend time on this, just have a quarentine to get it thorugh my fingers, but it's captured my interest more the more I've worked.
 I'm jumping in the deep end before reading the textbook/ manual, but will go for inspiration here or there in the moment.
 
-## Technically I should do the lowest level work first, but again, I'm doing what I have/want to first
-write some specs out, then they can expend in the future, separate the notes from the code a bit more.
-
-## I'm thinking I want to Design
+## All pieces of the project
 - my own (ARM inspired) limited ISA
 - an assembler to turn this assembly into a binary file
 - a compiler (real C to assembly for my ISA)
 - An emulator to run this binary on
 - A debugger
+- Automated testsing for a file or for a set of files
+    - The same C source file is compiled by gcc and ran on my PC, compiled.
+    - Either case can take input fron stdin and output to stdout
+    - I think I'll also end up allowing it to take argc argv
 
-I want to be able to run automated tests on all the files in the test programs, same C source file is compiled by gcc and ran on my PC, then Derek compiled (by my compiler, which is a c file compiled by gcc, then ran on my processor). Run a leetcode problem, maybe solve sudoku, diff mine vs standard?
-
-## To keep it simple
-* All variables are at the start of the function?
-* No optimisations.
-- Only one C file in, only one dasm out of compiler, only one binary file from that, ran by itself.
-
-### Whats not included in my C
-- heap
-- Main can't take parameters
-- All statements need {} (no `if (something) printf("wow\n");`)
-- No formatted strings in printf
-- any stdlib except for stdint/stdbool, and a bit of sdtio
-- many of the keywords - (if I can make this work, I could spend a ton of time and implement the rest, I probably won't care to. What am I going to learn implementing switch that I didn't learn implementing while)
-- Be careful how you name things, I will swap stuff out blindly
-- No floats!
-
-### Limitations in my ASM
-- All imediate values are decimal
-- All variables are char arrays or 64 bit
-later I'll add more:
-- char (1 byte), hword (2 byte), word (4 bytes), llong (8 bytes)
-- no .bss, its important in real programs (not so much these days), but not valuable for my leraning IMO
-- one file only
-- Be careful how you name things, I will swap stuff out blindly
-- its done in 2 passes, everything can see everyone else's addresses at any time
-
-#### The above aren't crazy undertakings, but I'll start simple
-
-# To Study
-- asm for a function call
-- opcode definition?
-- is an ast for all potential jumps? just functions, or something else?
-- start with sample ASM files, and test manually -> the simple assembler
+# Reference
 - https://developer.arm.com/documentation/dui0231/b/arm-instruction-reference
 
-# Potential fun notes, not needed
-### potential mistakes
-I'll have different variations as different core instruciotns, not a few bits for it.
 
-
-
-# Build
+# How to test it out 
 ## Assembler
 gcc src/Assembler.cpp src/Assembler_helpers.c -o assembler
 
@@ -63,9 +26,8 @@ gcc src/processor.c src/implementInstructions.c src/Assembler_helpers.c src/os_l
 
 ## run:
 ./assembler testFiles/some_basic_instructions.dasm -o output
-./proc output --debug # then I like P <enter> to see the registers
+./proc output --debug # then run `P` and press <enter> to see the registers
 
-# Use
 ## use dasm in the CPU directly
 ./proc output --dasm
 ```dasm
