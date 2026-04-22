@@ -18,7 +18,9 @@ enum {
     NOOP,
     LOAD,
     STORE,
-    JMP,
+    B,
+    BEQ,
+    BNEQ,
     CMP,
 
     MOV_REG,

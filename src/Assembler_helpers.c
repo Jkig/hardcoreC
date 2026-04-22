@@ -22,7 +22,9 @@ StringToInt direct_opcodes[] = {
     {"noop", NOOP},
     {"load", LOAD},
     {"store", STORE},
-    {"jmp", JMP},
+    {"b", B},
+    {"beq", BEQ},
+    {"bneq", BNEQ},
     {"cmp", CMP},
 };
 

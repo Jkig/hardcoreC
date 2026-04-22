@@ -29,6 +29,12 @@ typedef enum {
     GP_REGISTERS_OFFSET// General purpose arrays will be in an array here, going from [gp0, gp<GENERAL_PURPOSE_REGISTER_COUNT-1>] inclusive  
 } RegisterId;
 
+typedef enum {
+    ZERO        = (1 << 0),
+    NEGATIVE    = (1 << 1),
+    CARRY       = (1 << 2),
+    OVERFLOW    = (1 << 3)
+} StatusRegisterBits;
 // some interrupts will be used for certain puprposes commonly
 
 // TODO: Same for function stuff

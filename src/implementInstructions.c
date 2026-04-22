@@ -97,7 +97,7 @@ void op_NOOP() {
 // TODO: op_TRUE_NOOP_SPIN -> needs interrupt to escape, same as op_INVALID, empty
 
 void op_MOV_REG() {
-    printf("%s: exec\n", __func__);
+    printf("%s: exec\n", __func__); // Not seen in the macro here
     InstructionBits raw_instruction = {0};
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
     uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
@@ -113,7 +113,7 @@ void op_MOV_REG() {
 }
 
 void op_MOV_IMM_TO_LO() {
-    printf("%s: exec\n", __func__);
+    printf("%s: exec\n", __func__); // Not seen in the macro here
     InstructionBits raw_instruction = {0};
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
     uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
@@ -146,7 +146,6 @@ void op_MOV_IMM_TO_HI() {
 }
 
 void op_ADD_SRC_SRC() {
-    printf("%s: exec\n", __func__);
     FETCH_3REGS(dst, srcA, srcB, val);
 
     *dst = *srcA + *srcB;
@@ -317,8 +316,57 @@ void op_XOR_SRC_IMM() {
     // TODO: Update Status register (beautiful side effects)
 }
 
-void op_JMP() {
-    registers.pc += sizeof(Instruction);
+// I know that this *should* be a bit different, but I'm making assembler simpler, so just load the value to PC
+void op_B() {
+    printf("%s: exec\n", __func__); // Not seen in the macro here
+    InstructionBits raw_instruction = {0};
+    memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
+    uint32_t val = raw_instruction.ins.val;
+
+    if (!val) {
+        printf("%s, Failure, NULL val, I'm not stopping it, but proc should fail here!!\n", __func__);
+        registers.pc = 0;// So its easy to see problem still
+        return;
+    }
+    registers.pc = val;// The value is assumed to always fit in the low 32 bits, this is a fine assumption
+}
+
+void op_BEQ() {
+    printf("%s: exec\n", __func__); // Not seen in the macro here
+    InstructionBits raw_instruction = {0};
+    memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
+    uint32_t val = raw_instruction.ins.val;
+
+    if (!val) {
+        printf("%s, Failure, NULL val, I'm not stopping it, but proc should fail here!!\n", __func__);
+        registers.pc = 0;// So its easy to see problem still
+        return;
+    }
+
+    if (registers.status && ZERO) {
+        registers.pc = val;// The value is assumed to always fit in the low 32 bits, this is a fine assumption
+    } else {
+        registers.pc += sizeof(Instruction);
+    }
+}
+
+void op_BNEQ() {
+    printf("%s: exec\n", __func__); // Not seen in the macro here
+    InstructionBits raw_instruction = {0};
+    memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
+    uint32_t val = raw_instruction.ins.val;
+
+    if (!val) {
+        printf("%s, Failure, NULL val, I'm not stopping it, but proc should fail here!!\n", __func__);
+        registers.pc = 0;// So its easy to see problem still
+        return;
+    }
+
+    if (!(registers.status && ZERO)) {
+        registers.pc = val;// The value is assumed to always fit in the low 32 bits, this is a fine assumption
+    } else {
+        registers.pc += sizeof(Instruction);
+    }
 }
 
 void op_LOAD() {
@@ -334,7 +382,7 @@ void op_CMP() {
 }
 
 void op_SW_INTERUPT() {
-    printf("%s: exec\n", __func__);
+    printf("%s: exec\n", __func__); // Not seen in the macro here
     InstructionBits raw_instruction = {0};
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
     registers.pc += sizeof(Instruction);
@@ -355,10 +403,6 @@ void op_SW_INTERUPT() {
     interrupt_signals |= (1 << *interrupt_no);
 }
 
-void branch() {
-
-}
-
 // Globals
 instruction instruction_table[ISA_COUNT] = {
     // Just copy in from Opcode definition, and swap place by place with the op_INSTRUCTION_var
@@ -366,7 +410,9 @@ instruction instruction_table[ISA_COUNT] = {
     op_NOOP,
     op_LOAD,
     op_STORE,
-    op_JMP,
+    op_B,
+    op_BEQ,
+    op_BNEQ,
     op_CMP,
 
     op_MOV_REG,
