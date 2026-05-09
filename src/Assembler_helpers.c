@@ -196,7 +196,7 @@ Instruction build_one_binary_instruction(const char *line) {
 }
 
 void print_instruction(Instruction sample) {
-    printf("opcode: 0x%04x, A: 0x%04x, B: 0x%04x, C: 0x%04x, Val: 0x%08x\n", sample.opcode, sample.regA, sample.regB, sample.regC, sample.val);
+    printf("opcode: 0x%02x, A: 0x%02x, B: 0x%02x, C: 0x%02x, Val: 0x%08x\n", sample.opcode, sample.regA, sample.regB, sample.regC, sample.val);
 }
 
 #ifdef __cplusplus
