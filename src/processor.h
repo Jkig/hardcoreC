@@ -13,6 +13,13 @@
 #define INTERRUPT_POINTER_1             10
 #define INTERRUPT_POINTER_2             11
 
+typedef enum {
+    CONTINUE_PROGRAM,
+    SKIP_INSTRUCTION,
+    END_PROGRAM
+} program_actions;
+
+
 typedef struct {
     uint64_t pc;
     uint64_t sp;

@@ -25,7 +25,7 @@ uint64_t *get_register_ptr(uint8_t reg_id) {
         printf("%s, Failure, register ID of 0?\n", __func__);
         return NULL;
     } else if (reg_id > GENERAL_PURPOSE_REGISTER_COUNT + LAST_REGISTER_BEFORE_GP) {
-        printf("%s, Failure, register ID of 0?\n", __func__);
+        printf("%s, Failure, register ID too high?\n", __func__);
         return NULL;
     }
 
@@ -396,7 +396,7 @@ void op_SW_INTERUPT() {
     }
 
     if (*interrupt_no < SOFTWARE_INTERRUPT_HI_0 || SOFTWARE_INTERRUPT_LOW_3 < *interrupt_no) {
-        printf("%s, This is an invalid interrupt, can't trigger %llu from software\n", __func__, *interrupt_no);
+        printf("%s, This is an invalid interrupt, can't trigger %lu from software\n", __func__, *interrupt_no);
         return;
     }
 

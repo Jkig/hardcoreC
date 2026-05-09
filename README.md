@@ -31,5 +31,5 @@ gcc src/processor.c src/implementInstructions.c src/Assembler_helpers.c src/os_l
 ## use dasm in the CPU directly
 ./proc output --dasm
 ```dasm
->>mov gp1, 9
+>>mov gp1, 7
 ```

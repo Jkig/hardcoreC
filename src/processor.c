@@ -34,9 +34,9 @@ uint64_t program_return = 0;
 
 
 void print_regs() {
-    printf("PC: 0x%016llx, SP: 0x%016llx, status: 0x%016llx, Res: 0x%016llx\n", registers.pc, registers.sp, registers.status, registers.res);
+    printf("PC: 0x%016lx, SP: 0x%016lx, status: 0x%016lx, Res: 0x%016lx\n", registers.pc, registers.sp, registers.status, registers.res);
     for (uint8_t i=0;i<GENERAL_PURPOSE_REGISTER_COUNT/2;i++) {// I don't need to see everything
-        printf("\tgp[%d]:\t0x%016llx\t%lld\n", i, registers.gp[i], registers.gp[i]);
+        printf("\tgp[%d]:\t0x%016lx\t%ld\n", i, registers.gp[i], registers.gp[i]);
     }
     printf("\n");
 }
@@ -95,13 +95,12 @@ size_t load_file_to_ram(const char *filename) {
     return bytes_read;
 }
 
-
-int debug(bool allow_dasm) {
+program_actions debug(bool allow_dasm) {
     // TODO: latere I'll implement a lot larger debug mode, but for now just step, print registers, and 
     // adding a full on GDB isn't absolutely crazy hard. For now just print a list of addresses for the functions, expand it later
     
     // I think I want a couple levels of debuging, one for later is more for debugging C, and I want to be able to place anything in any register.
-    
+    program_actions action = CONTINUE_PROGRAM;
     printf(".");
     int cmd;
     do {
@@ -111,13 +110,15 @@ int debug(bool allow_dasm) {
     switch(cmd) {
         case 'P':
             print_regs();
+            action = SKIP_INSTRUCTION;
             break;
         case 'p':
             // read address from user and print the contents of that address in RAM
             printf("Enter address to print: ");
             uint64_t addr;
-            scanf("%llx", &addr);
-            printf("Contents at address %016llx: %016llx\n", addr, *(uint64_t *)(&ram[addr]));
+            scanf("%lx", &addr);
+            printf("Contents at address %016lx: %016lx\n", addr, *(uint64_t *)(&ram[addr]));
+            action = SKIP_INSTRUCTION;
             break;
         case 's':
             // Step through the next instruction
@@ -127,7 +128,8 @@ int debug(bool allow_dasm) {
             break;
         case 'k':
             // terminate program
-            return -1;
+            action = END_PROGRAM;
+            break;
         case '>':
             if (!allow_dasm) {
                 printf("not allowed to run dasm right now\n");
@@ -157,7 +159,7 @@ int debug(bool allow_dasm) {
             break;
     }
     printf("\n");
-    return 0;
+    return action;
 }
 
 
@@ -192,7 +194,14 @@ int main(int argc, char *argv[]) {
     memcpy(&registers.pc, &ram[sizeof(uint64_t)], sizeof(uint64_t));
 
     while (true) {
-        if (debug_mode && debug(dasm_interpereter)) break;
+        printf("loop1\n");
+        if (debug_mode) {
+            program_actions action = debug(dasm_interpereter);
+            if (action == SKIP_INSTRUCTION)
+                continue;
+            else if (action == END_PROGRAM)
+                break;
+        }
 
         while (interrupt_signals != 0) executeInterrupts();
 
