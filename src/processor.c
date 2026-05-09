@@ -194,7 +194,6 @@ int main(int argc, char *argv[]) {
     memcpy(&registers.pc, &ram[sizeof(uint64_t)], sizeof(uint64_t));
 
     while (true) {
-        printf("loop1\n");
         if (debug_mode) {
             program_actions action = debug(dasm_interpereter);
             if (action == SKIP_INSTRUCTION)
