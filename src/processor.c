@@ -34,7 +34,8 @@ uint64_t program_return = 0;
 
 
 void print_regs() {
-    printf("PC: 0x%016lx, SP: 0x%016lx, status: 0x%016lx, Res: 0x%016lx\n", registers.pc, registers.sp, registers.status, registers.res);
+    printf("   PC:     0x%016lx    SP:  0x%016lx\n", registers.pc, registers.sp);
+    printf("   Status: 0x%016lx    Res: 0x%016lx\n\n", registers.status, registers.res);
     for (uint8_t i=0;i<GENERAL_PURPOSE_REGISTER_COUNT/2;i++) {// I don't need to see everything
         printf("\tgp[%d]:\t0x%016lx\t%ld\n", i, registers.gp[i], registers.gp[i]);
     }
