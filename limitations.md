@@ -9,7 +9,7 @@
 - All statements need {} (no `if (something) printf("wow\n");`)
 - No formatted strings in printf
 - any stdlib except for stdint/stdbool, and a bit of sdtio
-- many of the keywords - (if I can make this work, I could spend a ton of time and implement the rest, I probably won't care to. What am I going to learn implementing switch that I didn't learn implementing while)
+- many of the keywords - (I won't spend the time to implement the rest of C. I'm doing this to learn, what am I going to learn implementing `switch` that I didn't learn implementing `if`, or implementing `for` that I didn't learn implementing `while`)
 - Be careful how you name things, I will swap stuff out blindly
 - No floats!
 

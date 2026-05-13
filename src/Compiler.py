@@ -202,8 +202,16 @@ def tokenize_file(input_filename, output_filename):
 def to_dasm(root_node: ASTNode, file_name: str):
     '''
     Takes a root node of the AST with .dasm lines, and generates dasm code for it, writing to a .dasm file
-    # TODO If I don't have sufficient instructions in my ISA I'll find out here
-    # TODO I need some more information, like the globals and statics before I can build the file.
+    (easiest to do this in multiple passes?) is it fine to go through it line by line? what does an AST do?
+    # If I don't have sufficient instructions in my ISA I'll find out here
+    # I need some more information, like the globals and statics before I can build the file.
+    # order to work on these things in:
+        - Pulling all statics, globals, and literals to the right place - 2-4 hours?
+        - (types) (I have no idea) (4 hours?)
+        - arithmetic operations, including =, etc. (4 hours)
+        - if, while (4 hours)
+        - boolean stuff (4 hours)
+        - Any function call? - 4 hours?
     '''
 
     dasm_file_name = ".".join(file_name.split(".")[:-1] + ["dasm"])
