@@ -25,11 +25,14 @@ StringToInt direct_opcodes[] = {
     {"b", B},
     {"beq", BEQ},
     {"bneq", BNEQ},
-    {"cmp", CMP},
 };
 
 StringToInt mov[] = {
     {"mov", MOV_REG},
+};
+
+StringToInt cmp[] = {
+    {"cmp", CMP_SRC},
 };
 
 // All either src or IMM, based on if the third param is a number
@@ -181,8 +184,26 @@ Instruction build_one_binary_instruction(const char *line) {
         res.regA = get_reg_number(elements.arg1);
 
         if (is_immediate(elements.arg2)) {
-            opcode++; // trick by if mov i
+            opcode++; // This is a nice trick, becuase my arithmetic ops are always defined in number as _src then _imm
             // TODO: either add mov HI, or split it in a few chunks. Right now just MOV_LO
+            // TODO: This is one of the small changes I make between human readable asm and about to go to binary
+            res.val = atoi(elements.arg2);// TODO: bounds check, own func...
+        } else {
+            res.regB = get_reg_number(elements.arg2);
+        }
+        res.opcode = opcode;
+        
+        return res;
+    } else if (lookup_value(cmp, sizeof(cmp) / sizeof(StringToInt), elements.op, &opcode)) {
+        if (elements.arg1[0] == '\0' || elements.arg2[0] == '\0') {
+            printf("Not all needed args for cmp");
+            return invalid_res;
+        }
+        
+        res.regA = get_reg_number(elements.arg1);
+
+        if (is_immediate(elements.arg2)) {
+            opcode++; // This is a nice trick, becuase my arithmetic ops are always defined in number as _src then _imm
             res.val = atoi(elements.arg2);// TODO: bounds check, own func...
         } else {
             res.regB = get_reg_number(elements.arg2);

@@ -139,6 +139,7 @@ void op_MOV_IMM_TO_LO() {
 }
 
 void op_MOV_IMM_TO_HI() {
+    printf("%s: exec\n", __func__); // Not seen in the macro here
     InstructionBits raw_instruction = {0};
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
     uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
@@ -382,7 +383,7 @@ void op_LOAD() {
     FETCH_2REGS(dst, src, val);
 
     if (val != 1 || val != 2 || val != 4 || val != 8 ) {
-        printf("%s, Failure, invalid size/ instruction, trying to load something that's wrong");
+        printf("%s, Failure, invalid size/ instruction, trying to load something that's wrong", __func__);
         invalid_instruction();
         return;
     }
@@ -390,7 +391,7 @@ void op_LOAD() {
     uint64_t pointer_to_mem_as_index = *src;
     if ((pointer_to_mem_as_index + (val-1) ) >= RAM_SIZE_BYTES) {
         // Shouldn't really ever load 0, but I'm modeling the hardware as here, so its fine
-        printf("%s, Memory out of range!");
+        printf("%s, Memory out of range!", __func__);
         invalid_instruction();
         return;
     }
@@ -408,7 +409,7 @@ void op_STORE() {
     FETCH_2REGS(dst, src, val);
 
     if (val != 1 || val != 2 || val != 4 || val != 8 ) {
-        printf("%s, Failure, invalid size/ instruction, trying to load something that's wrong");
+        printf("%s, Failure, invalid size/ instruction, trying to load something that's wrong", __func__);
         invalid_instruction();
         return;
     }
@@ -416,7 +417,7 @@ void op_STORE() {
     uint64_t pointer_to_mem_as_index = *dst;
     if ((pointer_to_mem_as_index + (val-1) ) >= RAM_SIZE_BYTES) {
         // Shouldn't really ever load 0, but I'm modeling the hardware as here, so its fine
-        printf("%s, Memory out of range!");
+        printf("%s, Memory out of range!", __func__);
         invalid_instruction();
         return;
     }
@@ -427,10 +428,40 @@ void op_STORE() {
     }
 }
 
-void op_CMP() {
+void op_CMP_IMM() {
+    printf("%s: exec\n", __func__); // Not seen in the macro here
+    InstructionBits raw_instruction = {0};
+    memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
+    uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
+    uint32_t val = raw_instruction.ins.val;
     registers.pc += sizeof(Instruction);
-    // TODO: Update Status register (beautiful side effects) - Ex: overflow
-    // TODO: Update Status register (beautiful side effects) - Ex: overflow
+
+    registers.status &= ~(COMPARISON_FLAGS);
+    if (*dst < val) {
+        registers.status |= LESS;
+    } else if (*dst > val) {
+        registers.status |= GREATER;
+    } else if (*dst == val) {
+        registers.status |= EQUAL;
+    }
+}
+
+void op_CMP_SRC() {
+    printf("%s: exec\n", __func__); // Not seen in the macro here
+    InstructionBits raw_instruction = {0};
+    memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
+    uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
+    uint64_t *src = get_register_ptr(raw_instruction.ins.regB);
+    registers.pc += sizeof(Instruction);
+
+    registers.status &= ~(COMPARISON_FLAGS);
+    if (*dst < *src) {
+        registers.status |= LESS;
+    } else if (*dst > *src) {
+        registers.status |= GREATER;
+    } else if (*dst == *src) {
+        registers.status |= EQUAL;
+    }
 }
 
 void op_SW_INTERUPT() {
@@ -467,7 +498,8 @@ instruction instruction_table[ISA_COUNT] = {
     op_B,
     op_BEQ,
     op_BNEQ,
-    op_CMP,
+    op_CMP_SRC,
+    op_CMP_IMM,
 
     op_MOV_REG,
     op_MOV_IMM_TO_LO,

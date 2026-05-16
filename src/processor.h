@@ -41,8 +41,17 @@ typedef enum {
     ZERO        = (1 << 0),
     NEGATIVE    = (1 << 1),
     CARRY       = (1 << 2),
-    OVERFLOW    = (1 << 3)
-} StatusRegisterBits;
+    OVERFLOW    = (1 << 3),
+
+    EQUAL       = (1 << 4),
+    LESS        = (1 << 5),
+    GREATER     = (1 << 6),
+} StatusRegisterBitDefinitions;
+
+typedef enum {
+    COMPUTATION_FLAGS   = (ZERO | NEGATIVE | CARRY | OVERFLOW),
+    COMPARISON_FLAGS    = (EQUAL | LESS | GREATER),
+} StatusRegisterMasks;
 // some interrupts will be used for certain puprposes commonly
 
 // TODO: Same for function stuff

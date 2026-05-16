@@ -5,13 +5,7 @@
 #include <assert.h>
 
 
-/* Format of the instruction:
-
-Every instruction is a 64 bit number, split into these parts
-
-(I want to make this as simple as possible), and I can afford to
-*/
-
+// For different types, always source, then immediate
 typedef uint8_t Opcode;
 enum {
     INVALID = 0,
@@ -21,7 +15,8 @@ enum {
     B,
     BEQ,
     BNEQ,
-    CMP,
+    CMP_SRC,
+    CMP_IMM,
 
     MOV_REG,
     MOV_IMM_TO_LO,
