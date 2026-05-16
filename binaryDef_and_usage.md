@@ -35,3 +35,6 @@ I'm doing this project for fun and to learn. If I can make the data section, I c
 - LSB
 - big endian?/ little endian? think about what I want to target, I is implementation defined, and lots change, 
   - looks like little endian is most common on arm
+
+## Conventions
+- register gp15 will have program state as its value at the end, as a int64_t

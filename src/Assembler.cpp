@@ -48,6 +48,7 @@ void assemble(const char *input_file, const char *output_file) {
 
 int main(int argc, char *argv[]) {
     // Goes from .dasm (Derek's assembly) file to a binary file
+    // TODO: think about how I do the increment instruction for when I move in larget than 32 bit immediates, basically its just 2 instructions, not too complicated, just have to increment the running offset
     // take a file name etc..
     const char *input_file = NULL;
     const char *output_file = NULL;
