@@ -12,7 +12,7 @@ extern uint64_t program_state;
 extern uint64_t program_return;
 extern Registers registers;
 extern volatile uint64_t interrupt_signals;    // bit field
-extern uint8_t ram[RAM_SIZE];
+extern uint8_t ram[RAM_SIZE_BYTES];
 
 
 
@@ -398,7 +398,7 @@ void op_LOAD() {
     }
 
     uint64_t pointer_to_mem_as_index = *src;
-    if ((pointer_to_mem_as_index + (val-1) ) >= RAM_SIZE) {
+    if ((pointer_to_mem_as_index + (val-1) ) >= RAM_SIZE_BYTES) {
         // Shouldn't really ever load 0, but I'm modeling the hardware as here, so its fine
         printf("%s, Memory out of range!");
         invalid_instruction();
@@ -424,7 +424,7 @@ void op_STORE() {
     }
 
     uint64_t pointer_to_mem_as_index = *dst;
-    if ((pointer_to_mem_as_index + (val-1) ) >= RAM_SIZE) {
+    if ((pointer_to_mem_as_index + (val-1) ) >= RAM_SIZE_BYTES) {
         // Shouldn't really ever load 0, but I'm modeling the hardware as here, so its fine
         printf("%s, Memory out of range!");
         invalid_instruction();

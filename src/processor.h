@@ -5,7 +5,7 @@
 
 #include <stdint.h>
 
-#define RAM_SIZE                        (1024 * 1024) // 1 mb of ram
+#define RAM_SIZE_BYTES                        (1024 * 1024) // 1 mb of ram
 #define GENERAL_PURPOSE_REGISTER_COUNT  16
 
 #define INTERRUPT_SUB_NUMBER            8

@@ -25,7 +25,7 @@ extern instruction instruction_table[ISA_COUNT];
 
 // Globals
 Registers registers;
-alignas(8) uint8_t ram[RAM_SIZE];
+alignas(8) uint8_t ram[RAM_SIZE_BYTES];
 volatile uint64_t interrupt_signals;    // bit field
 uint64_t *vtable_start = (uint64_t *) (uint64_t) &ram[8];
 ProgramState program_state = NOT_STARTED;// TODO: Is this needed?
@@ -66,7 +66,7 @@ void executeInterrupts() {
 
 void execute() {
     InstructionBits raw_instruction = {0};
-    if (registers.pc >= (uint64_t) &ram[RAM_SIZE]) {
+    if (registers.pc >= (uint64_t) &ram[RAM_SIZE_BYTES]) {
         printf("Congrats on the segfault!\n");
         printf("Tried to access an instruction outside of ram\n");
     }
@@ -83,8 +83,8 @@ size_t load_file_to_ram(const char *filename) {
         return 0;
     }
 
-    // Read up to RAM_SIZE bytes
-    size_t bytes_read = fread(ram, 1, RAM_SIZE, file);
+    // Read up to RAM_SIZE_BYTES bytes
+    size_t bytes_read = fread(ram, 1, RAM_SIZE_BYTES, file);
 
     if (ferror(file)) {
         perror("fread");
