@@ -435,16 +435,16 @@ void op_CMP_IMM() {
     if (print_execute_instruction) printf("%s: exec\n", __func__); // Not seen in the macro here
     InstructionBits raw_instruction = {0};
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
-    uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
+    uint64_t *cmp_reg = get_register_ptr(raw_instruction.ins.regA);
     uint32_t val = raw_instruction.ins.val;
     registers.pc += sizeof(Instruction);
 
     registers.status &= ~(COMPARISON_FLAGS);
-    if (*dst < val) {
+    if (*cmp_reg < val) {
         registers.status |= LESS;
-    } else if (*dst > val) {
+    } else if (*cmp_reg > val) {
         registers.status |= GREATER;
-    } else if (*dst == val) {
+    } else if (*cmp_reg == val) {
         registers.status |= EQUAL;
     }
 }
@@ -453,16 +453,16 @@ void op_CMP_SRC() {
     if (print_execute_instruction) printf("%s: exec\n", __func__); // Not seen in the macro here
     InstructionBits raw_instruction = {0};
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
-    uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
-    uint64_t *src = get_register_ptr(raw_instruction.ins.regB);
+    uint64_t *cmp_reg1 = get_register_ptr(raw_instruction.ins.regA);
+    uint64_t *cmp_reg2 = get_register_ptr(raw_instruction.ins.regB);
     registers.pc += sizeof(Instruction);
 
     registers.status &= ~(COMPARISON_FLAGS);
-    if (*dst < *src) {
+    if (*cmp_reg1 < *cmp_reg2) {
         registers.status |= LESS;
-    } else if (*dst > *src) {
+    } else if (*cmp_reg1 > *cmp_reg2) {
         registers.status |= GREATER;
-    } else if (*dst == *src) {
+    } else if (*cmp_reg1 == *cmp_reg2) {
         registers.status |= EQUAL;
     }
 }
