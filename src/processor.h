@@ -29,7 +29,8 @@ typedef struct {
 } Registers;
 
 typedef enum {
-    REG_PC = 1,
+    INVALID_REGISTER,
+    REG_PC,
     REG_SP,
     REG_RES,
     REG_STATUS,
