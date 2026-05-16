@@ -13,7 +13,6 @@
 StringToInt REGISTER_NAMES[] = {
     {"pc", REG_PC},
     {"sp", REG_SP},
-    {"res", REG_RES},
     {"status", REG_STATUS},
     {"gp", GP_REGISTERS_OFFSET},
 };

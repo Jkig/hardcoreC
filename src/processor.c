@@ -28,14 +28,13 @@ Registers registers;
 alignas(8) uint8_t ram[RAM_SIZE_BYTES];
 volatile uint64_t interrupt_signals;    // bit field
 uint64_t *vtable_start = (uint64_t *) (uint64_t) &ram[8];
-ProgramState program_state = NOT_STARTED;// TODO: Is this needed?
-uint64_t program_return = 0;
+uint64_t program_return = 0; // TODO: I think I'll set up a convention that at the end of a program I read one of the GPs, for some status
 
 
 
 void print_regs() {
     printf("   PC:     0x%016lx    SP:  0x%016lx\n", registers.pc, registers.sp);
-    printf("   Status: 0x%016lx    Res: 0x%016lx\n\n", registers.status, registers.res);
+    printf("   Status: 0x%016lx\n\n", registers.status);
     for (uint8_t i=0;i<GENERAL_PURPOSE_REGISTER_COUNT/2;i++) {// I don't need to see everything
         printf("\tgp[%d]:\t0x%016lx\t%ld\n", i, registers.gp[i], registers.gp[i]);
     }
@@ -206,7 +205,7 @@ int main(int argc, char *argv[]) {
         while (interrupt_signals != 0) executeInterrupts();
 
         execute();
-        // if (program_state != 1) break;
+        // if ((registers.status & EXIT) != 0) break;
     }
 
     /* Give me a chance to explore after program stops

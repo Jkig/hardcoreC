@@ -36,7 +36,6 @@ uint64_t *get_register_ptr(uint8_t reg_id) {
     switch (reg_id) {
         case REG_PC:        return &registers.pc;
         case REG_SP:        return &registers.sp;
-        case REG_RES:       return &registers.res;
         case REG_STATUS:    return &registers.status;
         default:            return &registers.gp[reg_id - GP_REGISTERS_OFFSET];
     }
@@ -46,7 +45,6 @@ uint64_t *get_register_ptr(uint8_t reg_id) {
 int get_register_id(uint64_t *reg_ptr) {
     if (reg_ptr == &registers.pc)     return REG_PC;
     if (reg_ptr == &registers.sp)     return REG_SP;
-    if (reg_ptr == &registers.res)    return REG_RES;
     if (reg_ptr == &registers.status) return REG_STATUS;
 
     if (reg_ptr >= &registers.gp[0] &&

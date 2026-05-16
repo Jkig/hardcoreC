@@ -23,7 +23,6 @@ typedef enum {
 typedef struct {
     uint64_t pc;
     uint64_t sp;
-    uint64_t res;
     uint64_t status;
     uint64_t gp[GENERAL_PURPOSE_REGISTER_COUNT];
 } Registers;
@@ -32,7 +31,6 @@ typedef enum {
     INVALID_REGISTER,
     REG_PC,
     REG_SP,
-    REG_RES,
     REG_STATUS,
     GP_REGISTERS_OFFSET// General purpose arrays will be in an array here, going from [gp0, gp<GENERAL_PURPOSE_REGISTER_COUNT-1>] inclusive  
 } RegisterId;
@@ -46,11 +44,17 @@ typedef enum {
     EQUAL       = (1 << 4),
     LESS        = (1 << 5),
     GREATER     = (1 << 6),
+
+    NOT_STARTED = (1 << 7),
+    RUNNING     = (1 << 8),
+    FAILED      = (1 << 9),
+    EXIT        = (1 << 10)
 } StatusRegisterBitDefinitions;
 
 typedef enum {
     COMPUTATION_FLAGS   = (ZERO | NEGATIVE | CARRY | OVERFLOW),
     COMPARISON_FLAGS    = (EQUAL | LESS | GREATER),
+    PROGAM_STATE        = (NOT_STARTED | RUNNING | FAILED | EXIT),
 } StatusRegisterMasks;
 // some interrupts will be used for certain puprposes commonly
 
