@@ -159,14 +159,14 @@ void op_ADD_SRC_SRC() {
     FETCH_3REGS(dst, srcA, srcB, val);
 
     *dst = *srcA + *srcB;
-    // TODO: Update Status register (beautiful side effects)
+    // TODO: Update Status register (beautiful side effects) - Ex: overflow
 }
 
 void op_ADD_SRC_IMM() {
     FETCH_2REGS(dst, src, val);
 
     *dst = *src + val;
-    // TODO: Update Status register (beautiful side effects)
+    // TODO: Update Status register (beautiful side effects) - Ex: overflow
 }
 
 
@@ -174,28 +174,26 @@ void op_SUB_SRC_SRC() {
     FETCH_3REGS(dst, srcA, srcB, val);
 
     *dst = *srcA - *srcB;
-    // TODO: Update Status register (beautiful side effects)
 }
 
 void op_SUB_SRC_IMM() {
     FETCH_2REGS(dst, src, val);
 
     *dst = *src - val;
-    // TODO: Update Status register (beautiful side effects)
 }
 
 void op_MUL_SRC_SRC() {
     FETCH_3REGS(dst, srcA, srcB, val);
 
     *dst = *srcA * *srcB;
-    // TODO: Update Status register (beautiful side effects)
+    // TODO: Update Status register (beautiful side effects) - Ex: overflow
 }
 
 void op_MUL_SRC_IMM() {
     FETCH_2REGS(dst, src, val);
 
     *dst = *src * val;
-    // TODO: Update Status register (beautiful side effects)
+    // TODO: Update Status register (beautiful side effects) - Ex: overflow
 }
 
 void op_DIV_SRC_SRC() {
@@ -204,11 +202,11 @@ void op_DIV_SRC_SRC() {
     if (*srcB == 0) {
         printf("divide by zero!!");
         // invalid_instruction();// TODO: do I care about this, just a status update?
+        // TODO: Update Status register (beautiful side effects)
         *dst = 0;
     } else {
         *dst = *srcA / *srcB;
     }
-    // TODO: Update Status register (beautiful side effects)
 }
 
 void op_DIV_SRC_IMM() {
@@ -217,11 +215,11 @@ void op_DIV_SRC_IMM() {
     if (val == 0) {
         printf("divide by zero!!");
         // invalid_instruction();// TODO: do I care about this, just a status update?
+        // TODO: Update Status register (beautiful side effects)
         *dst = 0;
     } else {
         *dst = *src / val;
     }
-    // TODO: Update Status register (beautiful side effects)
 }
 
 void op_MOD_SRC_SRC() {
@@ -230,11 +228,11 @@ void op_MOD_SRC_SRC() {
     if (*srcB == 0) {
         printf("divide by zero!!");
         invalid_instruction();
+        // TODO: Update Status register (beautiful side effects)
         *dst = 0;
     } else {
         *dst = *srcA % *srcB;
     }
-    // TODO: Update Status register (beautiful side effects)
 }
 
 void op_MOD_SRC_IMM() {
@@ -243,53 +241,49 @@ void op_MOD_SRC_IMM() {
     if (val == 0) {
         printf("divide by zero!!");
         // invalid_instruction();// TODO: do I care about this, just a status update?
+        // TODO: Update Status register (beautiful side effects)
         *dst = 0;
     } else {
         *dst = *src % val;
     }
-    // TODO: Update Status register (beautiful side effects)
 }
 
 void op_LSH_SRC_SRC() {
     FETCH_3REGS(dst, srcA, srcB, val);
 
     *dst = *srcA << *srcB;
-    // TODO: Update Status register (beautiful side effects)
 }
 
 void op_LSH_SRC_IMM() {
     FETCH_2REGS(dst, src, val);
 
     *dst = *src << val;
-    // TODO: Update Status register (beautiful side effects)
 }
 
 void op_RSH_SRC_SRC() {
     FETCH_3REGS(dst, srcA, srcB, val);
 
     *dst = *srcA >> *srcB;
-    // TODO: Update Status register (beautiful side effects)
+    // TODO: Update Status register (beautiful side effects) - Ex: overflow
 }
 
 void op_RSH_SRC_IMM() {
     FETCH_2REGS(dst, src, val);
 
     *dst = *src >> val;
-    // TODO: Update Status register (beautiful side effects)
+    // TODO: Update Status register (beautiful side effects) - Ex: overflow
 }
 
 void op_AND_SRC_SRC() {
     FETCH_3REGS(dst, srcA, srcB, val);
 
     *dst = *srcA & *srcB;
-    // TODO: Update Status register (beautiful side effects)
 }
 
 void op_AND_SRC_IMM() {
     FETCH_2REGS(dst, src, val);
 
     *dst = *src & val;
-    // TODO: Update Status register (beautiful side effects)
 }
 
 void op_OR_SRC_SRC() {
@@ -307,28 +301,24 @@ void op_OR_SRC_SRC() {
     }
 
     *dst = *srcA | *srcB;
-    // TODO: Update Status register (beautiful side effects)
 }
 
 void op_OR_SRC_IMM() {
     FETCH_2REGS(dst, src, val);
 
     *dst = *src | val;
-    // TODO: Update Status register (beautiful side effects)
 }
 
 void op_XOR_SRC_SRC() {
     FETCH_3REGS(dst, srcA, srcB, val);
 
     *dst = *srcA ^ *srcB;
-    // TODO: Update Status register (beautiful side effects)
 }
 
 void op_XOR_SRC_IMM() {
     FETCH_2REGS(dst, src, val);
 
     *dst = *src ^ val;
-    // TODO: Update Status register (beautiful side effects)
 }
 
 // I know that this *should* be a bit different, but I'm making assembler simpler, so just load the value to PC
@@ -439,6 +429,8 @@ void op_STORE() {
 
 void op_CMP() {
     registers.pc += sizeof(Instruction);
+    // TODO: Update Status register (beautiful side effects) - Ex: overflow
+    // TODO: Update Status register (beautiful side effects) - Ex: overflow
 }
 
 void op_SW_INTERUPT() {
