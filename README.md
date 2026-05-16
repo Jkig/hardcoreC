@@ -43,10 +43,11 @@ gcc src/processor.c src/implementInstructions.c src/Assembler_helpers.c src/os_l
 
 ## run:
 ./assembler testFiles/some_basic_instructions.dasm -o output
-./proc output --debug # then run `P` and press <enter> to see the registers
+./proc output --debug
+-> then run `P` and press <enter> to see the registers
 
 ## use dasm in the CPU directly
 ./proc output --dasm
 ```dasm
->>mov gp1, 7
+.>>mov gp1, 7
 ```
