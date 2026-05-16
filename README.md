@@ -47,7 +47,7 @@ gcc src/processor.c src/implementInstructions.c src/Assembler_helpers.c src/os_l
 -> then run `P` and press <enter> to see the registers
 
 ## use dasm in the CPU directly
-./proc output --dasm
+./proc --dasm
 ```dasm
 .>>mov gp1, 7
 ```

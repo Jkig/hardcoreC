@@ -6,7 +6,6 @@
 
 #include "Assembler.h"
 #include "Assembler_helpers.h"
-#include "binaryDef.h"
 #include "ISADef.h"
 #include "processor.h"
 

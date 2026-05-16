@@ -1,5 +1,4 @@
 #include "processor.h"
-#include "implementInstructions.h"
 #include "ISADef.h"
 #include <stdbool.h>
 #include <stdint.h>
@@ -8,7 +7,6 @@
 #include <string.h>
 
 
-typedef void (*instruction)();
 
 
 // External globals

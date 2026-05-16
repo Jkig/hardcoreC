@@ -11,6 +11,9 @@
 #define INTERRUPT_POINTER_1             10
 #define INTERRUPT_POINTER_2             11
 
+typedef void (*instruction)();
+
+
 typedef struct {
     uint64_t pc;
     uint64_t sp;

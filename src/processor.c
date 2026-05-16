@@ -9,8 +9,6 @@
 
 #include "Assembler.h"
 #include "Assembler_helpers.h"
-#include "binaryDef.h"
-#include "implementInstructions.h"
 #include "ISADef.h"
 #include "os_like_stuff.h"
 #include "processor.h"
@@ -188,10 +186,21 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    size_t loaded = load_file_to_ram(argv[1]);
-    if (loaded == 0 && !dasm_interpereter) {
-        fprintf(stderr, "Failed to load file into RAM\nEmpty binary file or read error\n");
-        return 1;
+    // Allow no binary file, just run the dasm interpereter
+    if (strcmp(argv[1], "--dasm") == 0) {
+        print_execute_instruction = true;
+        debug_mode = true;
+        dasm_interpereter = true;
+        printf("Running in dasm interpereter mode, no binary file will be loaded into RAM\n");
+    } else {
+        printf("something!!\n");
+        ssize_t loaded = load_file_to_ram(argv[1]);
+        if (loaded == 0 && !dasm_interpereter) {
+            fprintf(stderr, "Failed to load file into RAM\nEmpty binary file or read error\n");
+            return 1;
+        } else if (loaded != 0 && dasm_interpereter) {
+            printf("No binary file loaded, but running in dasm interpereter mode, so this is fine\n");
+        }
     }
 
     memcpy(&registers.sp, &ram[0], sizeof(uint64_t));

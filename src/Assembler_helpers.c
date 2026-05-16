@@ -5,7 +5,6 @@
 #include <string.h>
 
 #include "Assembler.h"
-#include "binaryDef.h"
 #include "Dereks_Assembly.h"
 #include "ISADef.h"
 #include "processor.h"
