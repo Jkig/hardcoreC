@@ -32,6 +32,15 @@ I'm doing this project for fun and to learn. If I can make the data section, I c
 - I'm not trying to be to "embedded brained" so remember that. Interrupts don't matter too much.
 
 # Reference manual (lol)
+## Feels a lot like arm assembly
+Command looks like: `MNUMONIC [destination_register] [source_1_register] [source_2_register] [value]` seperated by commas
+
+### Some examples
+Set regiseter gp8 to 19:    `mov gp8, 19`
+Set regiseter gp8 to gp9:   `mov gp8, gp9`
+Add 2 values:               `add gp0, gp9, gp8`
+
+
 - LSB
 - big endian?/ little endian? think about what I want to target, I is implementation defined, and lots change, 
   - looks like little endian is most common on arm

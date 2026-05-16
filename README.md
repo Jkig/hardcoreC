@@ -5,8 +5,8 @@ I'm jumping in the deep end before reading the textbook/ manual, but will go for
 
 ## How to explore the project
 - I'll be working on a presentation for my website: https://www.derekleroux.com/home
-- See Dereks_Assembly.h for the assembly languages this processor can run
-- to understand how this whole thing works, see processor.h, then processor.c
+- See src/Dereks_Assembly.h for the assembly languages this processor can run
+- to understand how this whole thing works, see src/processor.h, then src/processor.c
 
 
 ## All pieces of the project

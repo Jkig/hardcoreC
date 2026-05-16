@@ -4,6 +4,10 @@
 #include "Assembler.h"
 #include "processor.h"
 
+/*******************************************************************************
+ See .dasm files in testFiles for example usage
+ See binaryDef_and_usage.md for the "reference maual"
+ ******************************************************************************/
 
 ////////////////////////////////////////////////////////////////////////////////
 // Register names
