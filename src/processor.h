@@ -1,8 +1,6 @@
 #ifndef EMULATE_PROCESSOR_H
 #define EMULATE_PROCESSOR_H
 #include <assert.h>
-
-
 #include <stdint.h>
 
 #define RAM_SIZE_BYTES                        (1024 * 1024) // 1 mb of ram
@@ -12,13 +10,6 @@
 #define INTERRUPT_AUX_NUMBER            9
 #define INTERRUPT_POINTER_1             10
 #define INTERRUPT_POINTER_2             11
-
-typedef enum {
-    CONTINUE_PROGRAM,
-    SKIP_INSTRUCTION,
-    END_PROGRAM
-} program_actions;
-
 
 typedef struct {
     uint64_t pc;
@@ -34,6 +25,8 @@ typedef enum {
     REG_STATUS,
     GP_REGISTERS_OFFSET// General purpose arrays will be in an array here, going from [gp0, gp<GENERAL_PURPOSE_REGISTER_COUNT-1>] inclusive  
 } RegisterId;
+
+#define LAST_REGISTER_BEFORE_GP (GP_REGISTERS_OFFSET - 1)
 
 typedef enum {
     ZERO        = (1 << 0),
@@ -92,6 +85,8 @@ typedef enum {
     INTERRUPT_COUNT,
 } Interrupts;
 
+static_assert(INTERRUPT_COUNT <= 64, "Too many interrupts");
+
 typedef enum {
     UNUSED,
     READ,
@@ -106,7 +101,11 @@ typedef enum {
 } File_descriptors;
 
 
-#define LAST_REGISTER_BEFORE_GP (GP_REGISTERS_OFFSET - 1)
-static_assert(INTERRUPT_COUNT <= 64, "Too many interrupts");
+// Management of the process that runs the CPU
+typedef enum {
+    CONTINUE_PROGRAM,
+    SKIP_INSTRUCTION,
+    END_PROGRAM
+} program_actions;
 
 #endif // EMULATE_PROCESSOR_H
