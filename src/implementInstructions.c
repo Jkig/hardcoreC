@@ -387,11 +387,54 @@ void op_BNEQ() {
 }
 
 void op_LOAD() {
-    registers.pc += sizeof(Instruction);
+    // Usage: load (into register A), (the value from the address B), (with the size in bytes)
+    // Encoding the bytes size as val
+    FETCH_2REGS(dst, src, val);
+
+    if (val != 1 || val != 2 || val != 4 || val != 8 ) {
+        printf("%s, Failure, invalid size/ instruction, trying to load something that's wrong");
+        invalid_instruction();
+        return;
+    }
+
+    uint64_t pointer_to_mem_as_index = *src;
+    if ((pointer_to_mem_as_index + (val-1) ) >= RAM_SIZE) {
+        // Shouldn't really ever load 0, but I'm modeling the hardware as here, so its fine
+        printf("%s, Memory out of range!");
+        invalid_instruction();
+        return;
+    }
+
+    for (int8_t i=0;i<val;i++) {
+        // TODO: Make sure my byte order is right
+        *dst = 0;
+        *dst += (ram[pointer_to_mem_as_index + i] << i);
+    }
 }
 
 void op_STORE() {
-    registers.pc += sizeof(Instruction);
+    // Usage: load (into register A), (the value from the address B), (with the size in bytes)
+    // Encoding the bytes size as val
+    FETCH_2REGS(dst, src, val);
+
+    if (val != 1 || val != 2 || val != 4 || val != 8 ) {
+        printf("%s, Failure, invalid size/ instruction, trying to load something that's wrong");
+        invalid_instruction();
+        return;
+    }
+
+    uint64_t pointer_to_mem_as_index = *dst;
+    if ((pointer_to_mem_as_index + (val-1) ) >= RAM_SIZE) {
+        // Shouldn't really ever load 0, but I'm modeling the hardware as here, so its fine
+        printf("%s, Memory out of range!");
+        invalid_instruction();
+        return;
+    }
+
+    for (int8_t i=0;i<val;i++) {
+        // TODO: Make sure my byte order is right
+        ram[pointer_to_mem_as_index + i] = ((*src && (0xFF << i)) >> i);
+    }
 }
 
 void op_CMP() {
