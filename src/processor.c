@@ -31,6 +31,8 @@ uint64_t *vtable_start = (uint64_t *) (uint64_t) &ram[8];
 uint64_t program_return = 0; // TODO: I think I'll set up a convention that at the end of a program I read one of the GPs, for some status
 
 
+bool print_execute_instruction = false;
+
 
 void print_regs() {
     printf("   PC:     0x%016lx    SP:  0x%016lx\n", registers.pc, registers.sp);
@@ -173,8 +175,10 @@ int main(int argc, char *argv[]) {
     bool dasm_interpereter = false;
     if (argc > 2) {
         if (strcmp(argv[2], "--debug") == 0) {
+            print_execute_instruction = true;
             debug_mode = true;
         } else if (strcmp(argv[2], "--dasm") == 0) {
+            print_execute_instruction = true;
             debug_mode = true;
             dasm_interpereter = true;
         } else {

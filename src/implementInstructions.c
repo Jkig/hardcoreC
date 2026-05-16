@@ -1,6 +1,7 @@
 #include "processor.h"
 #include "implementInstructions.h"
 #include "ISADef.h"
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stddef.h>
@@ -14,6 +15,8 @@ extern Registers registers;
 extern volatile uint64_t interrupt_signals;    // bit field
 extern uint8_t ram[RAM_SIZE_BYTES];
 
+
+extern bool print_execute_instruction;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -57,7 +60,7 @@ int get_register_id(uint64_t *reg_ptr) {
 
 // TODO: out of range in the other way too
 #define FETCH_3REGS(dst, srcA, srcB, val)                                \
-    printf("%s: exec\n", __func__);                                      \
+    if (print_execute_instruction) printf("%s: exec\n", __func__);       \
     InstructionBits raw_instruction = {0};                               \
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction)); \
     uint64_t *dst  = get_register_ptr(raw_instruction.ins.regA);         \
@@ -72,7 +75,7 @@ int get_register_id(uint64_t *reg_ptr) {
     }
 
 #define FETCH_2REGS(dst, src, val)                                       \
-    printf("%s: exec\n", __func__);                                      \
+    if (print_execute_instruction) printf("%s: exec\n", __func__);       \
     InstructionBits raw_instruction = {0};                               \
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction)); \
     uint64_t *dst  = get_register_ptr(raw_instruction.ins.regA);         \
@@ -102,7 +105,7 @@ void op_NOOP() {
 // TODO: op_TRUE_NOOP_SPIN -> needs interrupt to escape, same as op_INVALID, empty
 
 void op_MOV_REG() {
-    printf("%s: exec\n", __func__); // Not seen in the macro here
+    if (print_execute_instruction) printf("%s: exec\n", __func__); // Not seen in the macro here
     InstructionBits raw_instruction = {0};
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
     uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
@@ -119,7 +122,7 @@ void op_MOV_REG() {
 }
 
 void op_MOV_IMM_TO_LO() {
-    printf("%s: exec\n", __func__); // Not seen in the macro here
+    if (print_execute_instruction) printf("%s: exec\n", __func__); // Not seen in the macro here
     InstructionBits raw_instruction = {0};
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
     uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
@@ -137,7 +140,7 @@ void op_MOV_IMM_TO_LO() {
 }
 
 void op_MOV_IMM_TO_HI() {
-    printf("%s: exec\n", __func__); // Not seen in the macro here
+    if (print_execute_instruction) printf("%s: exec\n", __func__); // Not seen in the macro here
     InstructionBits raw_instruction = {0};
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
     uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
@@ -322,6 +325,7 @@ void op_XOR_SRC_IMM() {
 
 // I know that this *should* be a bit different, but I'm making assembler simpler, so just load the value to PC
 void op_B() {
+    // TODO: Should I general branch be able to b to some register? I know its already fairly limited
     InstructionBits raw_instruction = {0};
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
     uint32_t val = raw_instruction.ins.val;
@@ -336,19 +340,18 @@ void op_B() {
 }
 
 void op_BEQ() {
-    printf("%s: exec\n", __func__); // Not seen in the macro here
+    if (print_execute_instruction) printf("%s: exec\n", __func__); // Not seen in the macro here
     InstructionBits raw_instruction = {0};
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
     uint32_t val = raw_instruction.ins.val;
 
     if (!val) {
         printf("%s, Failure, NULL val, I'm not stopping it, but proc should fail here!!\n", __func__);
-        registers.pc = 0;// So its easy to see problem still
         invalid_instruction();
         return;
     }
 
-    if (registers.status && ZERO) {
+    if (registers.status && EQUAL) {
         registers.pc = val;// The value is assumed to always fit in the low 32 bits, this is a fine assumption
     } else {
         registers.pc += sizeof(Instruction);
@@ -356,19 +359,18 @@ void op_BEQ() {
 }
 
 void op_BNEQ() {
-    printf("%s: exec\n", __func__); // Not seen in the macro here
+    if (print_execute_instruction) printf("%s: exec\n", __func__); // Not seen in the macro here
     InstructionBits raw_instruction = {0};
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
     uint32_t val = raw_instruction.ins.val;
 
     if (!val) {
         printf("%s, Failure, NULL val, I'm not stopping it, but proc should fail here!!\n", __func__);
-        registers.pc = 0;// So its easy to see problem still
         invalid_instruction();
         return;
     }
 
-    if (!(registers.status && ZERO)) {
+    if (!(registers.status && EQUAL)) {
         registers.pc = val;// The value is assumed to always fit in the low 32 bits, this is a fine assumption
     } else {
         registers.pc += sizeof(Instruction);
@@ -427,7 +429,7 @@ void op_STORE() {
 }
 
 void op_CMP_IMM() {
-    printf("%s: exec\n", __func__); // Not seen in the macro here
+    if (print_execute_instruction) printf("%s: exec\n", __func__); // Not seen in the macro here
     InstructionBits raw_instruction = {0};
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
     uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
@@ -445,7 +447,7 @@ void op_CMP_IMM() {
 }
 
 void op_CMP_SRC() {
-    printf("%s: exec\n", __func__); // Not seen in the macro here
+    if (print_execute_instruction) printf("%s: exec\n", __func__); // Not seen in the macro here
     InstructionBits raw_instruction = {0};
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
     uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
@@ -463,7 +465,7 @@ void op_CMP_SRC() {
 }
 
 void op_SW_INTERUPT() {
-    printf("%s: exec\n", __func__); // Not seen in the macro here
+    if (print_execute_instruction) printf("%s: exec\n", __func__); // Not seen in the macro here
     InstructionBits raw_instruction = {0};
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
     registers.pc += sizeof(Instruction);
