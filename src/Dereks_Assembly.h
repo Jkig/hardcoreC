@@ -4,12 +4,22 @@
 #include "Assembler.h"
 #include "processor.h"
 
+
+////////////////////////////////////////////////////////////////////////////////
+// Register names
+////////////////////////////////////////////////////////////////////////////////
+
 StringToInt REGISTER_NAMES[] = {
     {"pc",      REG_PC},
     {"sp",      REG_SP},
     {"status",  REG_STATUS},
     {"gp",      GP_REGISTERS_OFFSET},
 };
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Instructions
+////////////////////////////////////////////////////////////////////////////////
 
 StringToInt direct_opcodes[] = {
     {"noop",    NOOP},
@@ -20,16 +30,21 @@ StringToInt direct_opcodes[] = {
     {"bneq",    BNEQ},// TODO: I think I want to get rid of this, I'm keeping it streamlined
 };
 
+/* All instructions after this are really multiple opcodes, I'll call them variations
+ *    For example, you can move an immediate value into some destination register, or
+ *    you can move some the contents of some other register into the destination register
+ *
+ * Variations opcode numbers will always start with src, then immediate
+ */
 StringToInt mov[] = {
     {"mov",     MOV_REG},
+    // Mov has 3 variations, src -> dst, immediate to lowhalf of dst or highhalf of dst
 };
 
 StringToInt cmp[] = {
     {"cmp",     CMP_SRC},
 };
 
-// All either src or IMM, based on if the third param is a number
-// src is first, then if it is imm add 1
 StringToInt arithmetic_instruction_to_opcode[] = {
     {"add",     ADD_SRC_SRC},
     {"sub",     SUB_SRC_SRC},

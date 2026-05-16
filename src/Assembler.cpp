@@ -19,11 +19,11 @@ void assemble(const char *input_file, const char *output_file) {
     uint64_t placeholder = sizeof(uint64_t) * 100; // I'm using the stack yet, but I'll put it far out
     fwrite(&placeholder, sizeof(uint64_t), 1, binary);
 
-    placeholder = sizeof(uint64_t) * (INTERUPT_COUNT + 1); // hardcode _start right after vector table, and have reset vector point there
+    placeholder = sizeof(uint64_t) * (INTERRUPT_COUNT + 1); // hardcode _start right after vector table, and have reset vector point there
     fwrite(&placeholder, sizeof(uint64_t), 1, binary);
 
     placeholder = 0; // clear out the rest of the vector table
-    for (uint8_t i=0;i<INTERUPT_COUNT-1-2;i++)
+    for (uint8_t i=0;i<INTERRUPT_COUNT-1-2;i++)
         fwrite(&placeholder, sizeof(uint64_t), 1, binary);
 
     const char *text = "programmed!!Hi!!";

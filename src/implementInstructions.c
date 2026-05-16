@@ -8,6 +8,9 @@
 #include <string.h>
 
 
+typedef void (*instruction)();
+
+
 // External globals
 extern uint64_t program_state;
 extern uint64_t program_return;

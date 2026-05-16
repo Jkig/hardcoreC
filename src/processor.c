@@ -51,7 +51,7 @@ void executeInterrupts() {
     // Set up for the context switch, I don't have to do it in .dasm, "the hardware does it"
     // Just dump the registers on the stack and restore, its actually easier than normal
 
-    for (uint8_t voffset=0; voffset<INTERUPT_COUNT;voffset++) {
+    for (uint8_t voffset=0; voffset<INTERRUPT_COUNT;voffset++) {
         while ((interrupt_signals & (1 << voffset)) != 0) {
             interrupt_signals &= ~(1 << voffset);// Turn off the interrupt that triggered this, move this into the interrupt implementetion if its ever needed to not happen
             if (voffset <= SYSTICK)
