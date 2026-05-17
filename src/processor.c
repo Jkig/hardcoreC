@@ -70,11 +70,10 @@ void execute() {
         printf("Tried to access an instruction outside of ram\n");
     }
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
-    print_instruction(raw_instruction.ins);
+    if (print_execute_instruction) print_instruction(raw_instruction.ins);
     instruction_table[raw_instruction.ins.opcode]();// I/O is a bit special, but I just put it in here
 }
 
-// Function to load file into RAM
 size_t load_file_to_ram(const char *filename) {
     FILE *file = fopen(filename, "rb");
     if (!file) {
@@ -82,7 +81,6 @@ size_t load_file_to_ram(const char *filename) {
         return 0;
     }
 
-    // Read up to RAM_SIZE_BYTES bytes
     size_t bytes_read = fread(ram, 1, RAM_SIZE_BYTES, file);
 
     if (ferror(file)) {
@@ -165,7 +163,7 @@ program_actions debug(bool allow_dasm) {
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
-        fprintf(stderr, "Usage: %s <filename>\nProvide the name of a binary file\n", argv[0]);
+        fprintf(stderr, "Usage: %s <binary_filename> --[options debug|dasm]\n", argv[0]);
         return 1;
     }
 
@@ -181,7 +179,7 @@ int main(int argc, char *argv[]) {
             dasm_interpereter = true;
         } else {
             fprintf(stderr, "Unknown option: %s\n", argv[2]);
-            fprintf(stderr, "Usage: %s <filename> [--debug]\nProvide the name of a binary file and optionally enable debug mode", argv[0]);
+            fprintf(stderr, "Usage: %s <binary_filename> --[options debug|dasm]\nProvide the name of a binary file and optionally enable debug mode", argv[0]);
             return 1;
         }
     }
@@ -193,7 +191,6 @@ int main(int argc, char *argv[]) {
         dasm_interpereter = true;
         printf("Running in dasm interpereter mode, no binary file will be loaded into RAM\n");
     } else {
-        printf("something!!\n");
         ssize_t loaded = load_file_to_ram(argv[1]);
         if (loaded == 0 && !dasm_interpereter) {
             fprintf(stderr, "Failed to load file into RAM\nEmpty binary file or read error\n");
@@ -218,13 +215,10 @@ int main(int argc, char *argv[]) {
         while (interrupt_signals != 0) executeInterrupts();
 
         execute();
-        // if ((registers.status & EXIT) != 0) break;
+        if ((registers.status & EXIT) != 0) break;
     }
 
-    /* Give me a chance to explore after program stops
-    while (true) {
-        if (debug(false)) break;
-    }
-    */
+    while (true) if (debug(false)) break;// So I can see state of program after exit
+
     return program_return;
 }
