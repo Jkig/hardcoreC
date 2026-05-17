@@ -12,7 +12,7 @@
 // External globals
 extern uint64_t program_state;
 extern uint64_t program_return;
-extern Registers registers;
+extern CPU cpu;
 extern volatile uint64_t interrupt_signals;    // bit field
 extern uint8_t ram[RAM_SIZE_BYTES];
 

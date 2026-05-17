@@ -22,7 +22,7 @@ extern instruction instruction_table[OPCODE_COUNT];
 
 
 // Globals
-Registers registers;
+CPU cpu;
 alignas(8) uint8_t ram[RAM_SIZE_BYTES];
 volatile uint64_t interrupt_signals;    // bit field
 uint64_t *vtable_start = (uint64_t *) (uint64_t) &ram[8];

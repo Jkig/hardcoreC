@@ -19,7 +19,7 @@ typedef struct {
     uint64_t sp;
     uint64_t status;
     uint64_t gp[GENERAL_PURPOSE_REGISTER_COUNT];
-} Registers;
+} CPU;
 
 typedef enum {
     INVALID_REGISTER,
