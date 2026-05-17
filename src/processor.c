@@ -18,7 +18,7 @@
 
 
 // External globals
-extern instruction instruction_table[ISA_COUNT];
+extern instruction instruction_table[OPCODE_COUNT];
 
 
 // Globals

@@ -41,7 +41,7 @@ enum {
     XOR_SRC_SRC,
     XOR_SRC_IMM,
 
-    ISA_COUNT,
+    OPCODE_COUNT,
 };
 
 typedef struct Instruction {
@@ -57,7 +57,7 @@ typedef union InstructionBits {
     Instruction ins;
 } InstructionBits;
 
-static_assert(ISA_COUNT < 256, "Too many instructions");
+static_assert(OPCODE_COUNT < 256, "Too many instructions");
 static_assert(sizeof(Instruction) == 8, "Instruction struct must be 8 bytes");
 static_assert(sizeof(InstructionBits) == 8, "InstructionBits union must be 8 bytes");
 

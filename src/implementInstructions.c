@@ -490,7 +490,7 @@ void op_SW_INTERUPT() {
 }
 
 // Globals
-instruction instruction_table[ISA_COUNT] = {
+instruction instruction_table[OPCODE_COUNT] = {
     // Just copy in from Opcode definition, and swap place by place with the op_INSTRUCTION_var
     op_INVALID,
     op_NOOP,
