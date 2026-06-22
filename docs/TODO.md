@@ -36,7 +36,7 @@ function calls
 
 - I don't need an DAG for the functions, recursion is fine
 	- Just be able to branch to a function, or referene something in ram / in data seciton. -> if its in a function, there is a set value 
-	- I could have everything be done in registers, this is simple, but too restrictive??? maybe say fuck it??
+	- I could have everything be done in registers, this is simple, but too restrictive???
 	- at what phase to branch to that?
 - Data is similar, swap every reference of it to the data
 - -> how to use types??
