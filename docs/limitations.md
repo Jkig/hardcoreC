@@ -2,6 +2,9 @@
 * All variables are at the start of the function?
 * No optimisations.
 - Only one C file in, only one dasm out of compiler, only one binary file from that, ran by itself.
+- File 
+- I'll start by not actually having anything on the stack, all "locals" will actually go to some global, then get local variables working, globals should be easier, start there.
+- Do local variables remain offsets from the pointer to the current function frame, should I keep a register for top of the current stack? then ability to restore?
 
 ### Whats not included in my C (yet?)
 - heap
@@ -10,8 +13,13 @@
 - No formatted strings in printf
 - any stdlib except for stdint/stdbool, and a bit of sdtio
 - many of the keywords - (I won't spend the time to implement the rest of C. I'm doing this to learn, what am I going to learn implementing `switch` that I didn't learn implementing `if`, or implementing `for` that I didn't learn implementing `while`)
+- **See the `unused_keywords` in Compiler.py** 
 - Be careful how you name things, I will swap stuff out blindly
 - No floats!
+- No statics, file or function level
+- All variables must be initialized
+- no forward declarations
+- wait a bit to cast
 
 ### Limitations in my ASM
 - All imediate values are decimal
