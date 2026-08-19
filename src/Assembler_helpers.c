@@ -16,7 +16,7 @@ extern "C" {
 #endif
 
 int lookup_value(const StringToInt *table, size_t count, const char *key,
-         uint8_t *out_value) {
+    uint8_t *out_value) {
   for (size_t i = 0; i < count; i++) {
     if (strcmp(table[i].key, key) == 0) {
       *out_value = table[i].value;
@@ -33,7 +33,7 @@ void parse_line(const char *line, InstructionStrings *inst) {
 
   if (line[0] != '\t' && line[0] != '>') {
     printf("shouldn't have seen a line that wasn't starting with \\t "
-         "in this function\n");
+        "in this function\n");
     return;
   }
 
@@ -97,8 +97,8 @@ int get_reg_number(const char *s) {
     return atoi(&s[2]) + GP_REGISTERS_OFFSET;
 
   if (lookup_value(REGISTER_NAMES,
-           sizeof(REGISTER_NAMES) / sizeof(StringToInt),
-           s, &register_number))
+      sizeof(REGISTER_NAMES) / sizeof(StringToInt),
+      s, &register_number))
     return register_number;
   return 0;
 }
@@ -119,11 +119,11 @@ Instruction build_one_binary_instruction(const char *line) {
   uint8_t opcode;
   Instruction res = {0};
   if (lookup_value(arithmetic_instruction_to_opcode,
-           sizeof(arithmetic_instruction_to_opcode) /
-             sizeof(StringToInt),
-           elements.op, &opcode)) {
+      sizeof(arithmetic_instruction_to_opcode) /
+          sizeof(StringToInt),
+      elements.op, &opcode)) {
     if (elements.arg1[0] == '\0' || elements.arg2[0] == '\0' ||
-      elements.arg2[0] == '\0') {
+        elements.arg2[0] == '\0') {
       printf("Not all needed args for arithmetic operations");
       return invalid_res;
     }
@@ -143,14 +143,14 @@ Instruction build_one_binary_instruction(const char *line) {
     return res;
 
   } else if (lookup_value(direct_opcodes,
-              sizeof(direct_opcodes) / sizeof(StringToInt),
-              elements.op, &opcode)) {
+      sizeof(direct_opcodes) / sizeof(StringToInt),
+      elements.op, &opcode)) {
     res.opcode = opcode;
     // these are largely all special?
     return res;
     
   } else if (lookup_value(mov, sizeof(mov) / sizeof(StringToInt),
-              elements.op, &opcode)) {
+      elements.op, &opcode)) {
     if (elements.arg1[0] == '\0' || elements.arg2[0] == '\0') {
       printf("Not all needed args for mov");
       return invalid_res;
@@ -174,7 +174,7 @@ Instruction build_one_binary_instruction(const char *line) {
     
     return res;
   } else if (lookup_value(cmp, sizeof(cmp) / sizeof(StringToInt),
-              elements.op, &opcode)) {
+      elements.op, &opcode)) {
     if (elements.arg1[0] == '\0' || elements.arg2[0] == '\0') {
       printf("Not all needed args for cmp");
       return invalid_res;
@@ -200,8 +200,8 @@ Instruction build_one_binary_instruction(const char *line) {
 
 void print_instruction(Instruction sample) {
   printf("opcode: 0x%02x, A: 0x%02x, B: 0x%02x, C: 0x%02x, "
-       "Val: 0x%08x\n",
-       sample.opcode, sample.regA, sample.regB, sample.regC, sample.val);
+      "Val: 0x%08x\n",
+      sample.opcode, sample.regA, sample.regB, sample.regC, sample.val);
 }
 
 #ifdef __cplusplus

@@ -3,13 +3,13 @@
 #include <assert.h>
 #include <stdint.h>
 
-#define RAM_SIZE_BYTES            (1024 * 1024) // 1 mb of ram
-#define GENERAL_PURPOSE_REGISTER_COUNT  16
+#define RAM_SIZE_BYTES                       (1024 * 1024) // 1 mb of ram
+#define GENERAL_PURPOSE_REGISTER_COUNT      16
 
-#define INTERRUPT_SUB_NUMBER      8
-#define INTERRUPT_AUX_NUMBER      9
-#define INTERRUPT_POINTER_1       10
-#define INTERRUPT_POINTER_2       11
+#define INTERRUPT_SUB_NUMBER                 8
+#define INTERRUPT_AUX_NUMBER                 9
+#define INTERRUPT_POINTER_1                  10
+#define INTERRUPT_POINTER_2                  11
 
 typedef void (*instruction)();
 
@@ -34,25 +34,25 @@ typedef enum {
 #define LAST_REGISTER_BEFORE_GP (GP_REGISTERS_OFFSET - 1)
 
 typedef enum {
-  ZERO    = (1 << 0),
-  NEGATIVE  = (1 << 1),
-  CARRY     = (1 << 2),
-  OVERFLOW  = (1 << 3),
+  ZERO        = (1 << 0),
+  NEGATIVE    = (1 << 1),
+  CARRY       = (1 << 2),
+  OVERFLOW    = (1 << 3),
 
-  EQUAL     = (1 << 4),
-  LESS    = (1 << 5),
-  GREATER   = (1 << 6),
+  EQUAL       = (1 << 4),
+  LESS        = (1 << 5),
+  GREATER     = (1 << 6),
 
   NOT_STARTED = (1 << 7),
-  RUNNING   = (1 << 8),
-  FAILED    = (1 << 9),
-  EXIT    = (1 << 10)
+  RUNNING     = (1 << 8),
+  FAILED      = (1 << 9),
+  EXIT        = (1 << 10)
 } StatusRegisterBitDefinitions;
 
 typedef enum {
   COMPUTATION_FLAGS   = (ZERO | NEGATIVE | CARRY | OVERFLOW),
-  COMPARISON_FLAGS  = (EQUAL | LESS | GREATER),
-  PROGAM_STATE    = (NOT_STARTED | RUNNING | FAILED | EXIT),
+  COMPARISON_FLAGS    = (EQUAL | LESS | GREATER),
+  PROGAM_STATE        = (NOT_STARTED | RUNNING | FAILED | EXIT),
 } StatusRegisterMasks;
 // some interrupts will be used for certain puprposes commonly
 
@@ -82,7 +82,8 @@ typedef enum {
   SOFTWARE_INTERRUPT_LOW_2,
   SOFTWARE_INTERRUPT_LOW_3,
 
-// Done with core interrupts, now handing some more to peropherals, OS, etc...?
+  // Done with core interrupts, now handing some more to peropherals, OS,
+  // etc...?
   PERIPHERAL_I2C,
   PERIPHERAL_SPI,
   PERIPHERAL_GPIO,

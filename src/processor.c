@@ -37,12 +37,12 @@ bool print_execute_instruction = false;
 
 void print_regs() {
   printf("   PC:   0x%016lx  SP:  0x%016lx\n", registers.pc,
-       registers.sp);
+      registers.sp);
   printf("   Status: 0x%016lx\n\n", registers.status);
   for (uint8_t i=0;i<GENERAL_PURPOSE_REGISTER_COUNT/2;i++) {
     // I don't need to see everything
     printf("\tgp[%d]:\t0x%016lx\t%ld\n", i, registers.gp[i],
-         registers.gp[i]);
+        registers.gp[i]);
   }
   printf("\n");
 }
@@ -137,7 +137,7 @@ program_actions debug(bool allow_dasm) {
       uint64_t addr;
       scanf("%lx", &addr);
       printf("Contents at address %016lx: %016lx\n", addr,
-           *(uint64_t *)(&ram[addr]));
+          *(uint64_t *)(&ram[addr]));
       action = SKIP_INSTRUCTION;
       break;
     case 's':
@@ -174,7 +174,7 @@ program_actions debug(bool allow_dasm) {
 
       registers.pc = 0;
       memcpy(&ram[registers.pc], &next_instruction.raw,
-           sizeof(Instruction));
+          sizeof(Instruction));
       break;
     default:
       break;
@@ -219,7 +219,7 @@ int main(int argc, char *argv[]) {
     debug_mode = true;
     dasm_interpereter = true;
     printf("Running in dasm interpereter mode, no binary file will be "
-         "loaded into RAM\n");
+        "loaded into RAM\n");
   } else {
     ssize_t loaded = load_file_to_ram(argv[1]);
     if (loaded == 0 && !dasm_interpereter) {
@@ -229,7 +229,7 @@ int main(int argc, char *argv[]) {
       return 1;
     } else if (loaded != 0 && dasm_interpereter) {
       printf("No binary file loaded, but running in dasm interpereter "
-           "mode, so this is fine\n");
+          "mode, so this is fine\n");
     }
   }
 

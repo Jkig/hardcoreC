@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
         output_file = argv[i];
       } else {
         printf("Usage: %s <file_name>.c -o <binary_file_name>\n",
-             argv[0]);
+            argv[0]);
         return 1;
       }
     } else {
@@ -86,8 +86,8 @@ int main(int argc, char *argv[]) {
   if (input_file == NULL || output_file == NULL) {
     printf("File names not set\n");
     printf("   input_file: %s\n   output_file: %s\n",
-         input_file ? input_file : "NULL",
-         output_file ? output_file : "NULL");
+        input_file ? input_file : "NULL",
+        output_file ? output_file : "NULL");
     return 1;
   }
 

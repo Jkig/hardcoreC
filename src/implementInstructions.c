@@ -34,16 +34,16 @@ uint64_t *get_register_ptr(uint8_t reg_id) {
     printf("%s, Failure, register ID of 0?\n", __func__);
     return NULL;
   } else if (reg_id >
-         GENERAL_PURPOSE_REGISTER_COUNT + LAST_REGISTER_BEFORE_GP) {
+      GENERAL_PURPOSE_REGISTER_COUNT + LAST_REGISTER_BEFORE_GP) {
     printf("%s, Failure, register ID too high?\n", __func__);
     return NULL;
   }
 
   switch (reg_id) {
-    case REG_PC:    return &registers.pc;
-    case REG_SP:    return &registers.sp;
+    case REG_PC:      return &registers.pc;
+    case REG_SP:      return &registers.sp;
     case REG_STATUS:  return &registers.status;
-    default:      return &registers.gp[reg_id - GP_REGISTERS_OFFSET];
+    default:          return &registers.gp[reg_id - GP_REGISTERS_OFFSET];
   }
 }
 
@@ -54,7 +54,7 @@ int get_register_id(uint64_t *reg_ptr) {
   if (reg_ptr == &registers.status) return REG_STATUS;
 
   if (reg_ptr >= &registers.gp[0] &&
-    reg_ptr <  &registers.gp[GENERAL_PURPOSE_REGISTER_COUNT]) {
+      reg_ptr <  &registers.gp[GENERAL_PURPOSE_REGISTER_COUNT]) {
     return GP_REGISTERS_OFFSET + (int)(reg_ptr - &registers.gp[0]);
   }
 
@@ -62,33 +62,33 @@ int get_register_id(uint64_t *reg_ptr) {
 }
 
 // TODO: out of range in the other way too
-#define FETCH_3REGS(dst, srcA, srcB, val)                \
-  if (print_execute_instruction) printf("%s: exec\n", __func__);     \
-  InstructionBits raw_instruction = {0};                 \
+#define FETCH_3REGS(dst, srcA, srcB, val)                                \
+if (print_execute_instruction) printf("%s: exec\n", __func__);           \
+InstructionBits raw_instruction = {0};                                   \
   memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction)); \
-  uint64_t *dst  = get_register_ptr(raw_instruction.ins.regA);     \
-  uint64_t *srcA = get_register_ptr(raw_instruction.ins.regB);     \
-  uint64_t *srcB = get_register_ptr(raw_instruction.ins.regC);     \
-  uint32_t val = raw_instruction.ins.val;                \
-  registers.pc += sizeof(Instruction);                 \
-  if (!(dst) || !(srcA) || !(srcB)) {                  \
-    printf("%s, Failure, NULL register\n", __func__);        \
-    invalid_instruction();                       \
-    return;                              \
+  uint64_t *dst  = get_register_ptr(raw_instruction.ins.regA);           \
+  uint64_t *srcA = get_register_ptr(raw_instruction.ins.regB);           \
+  uint64_t *srcB = get_register_ptr(raw_instruction.ins.regC);           \
+  uint32_t val = raw_instruction.ins.val;                                \
+  registers.pc += sizeof(Instruction);                                   \
+  if (!(dst) || !(srcA) || !(srcB)) {                                    \
+    printf("%s, Failure, NULL register\n", __func__);                    \
+    invalid_instruction();                                               \
+    return;                                                              \
   }
 
-#define FETCH_2REGS(dst, src, val)                     \
-  if (print_execute_instruction) printf("%s: exec\n", __func__);     \
-  InstructionBits raw_instruction = {0};                 \
+#define FETCH_2REGS(dst, src, val)                                       \
+  if (print_execute_instruction) printf("%s: exec\n", __func__);         \
+  InstructionBits raw_instruction = {0};                                 \
   memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction)); \
-  uint64_t *dst  = get_register_ptr(raw_instruction.ins.regA);     \
-  uint64_t *src = get_register_ptr(raw_instruction.ins.regB);      \
-  uint32_t val = raw_instruction.ins.val;                \
-  registers.pc += sizeof(Instruction);                 \
-  if (!(dst) || !(src)) {                        \
-    printf("%s, Failure, NULL register\n", __func__);        \
-    invalid_instruction();                       \
-    return;                              \
+  uint64_t *dst  = get_register_ptr(raw_instruction.ins.regA);           \
+  uint64_t *src  = get_register_ptr(raw_instruction.ins.regB);           \
+  uint32_t val = raw_instruction.ins.val;                                \
+  registers.pc += sizeof(Instruction);                                   \
+  if (!(dst) || !(src)) {                                                \
+    printf("%s, Failure, NULL register\n", __func__);                    \
+    invalid_instruction();                                               \
+    return;                                                              \
   }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -347,8 +347,8 @@ void op_B() {
 
   if (!val) {
     printf("%s, Failure, NULL val, I'm not stopping it, but proc should "
-         "fail here!!\n",
-         __func__);
+        "fail here!!\n",
+        __func__);
     registers.pc = 0;// So its easy to see problem still
     invalid_instruction();
     return;
@@ -368,8 +368,8 @@ void op_BEQ() {
 
   if (!val) {
     printf("%s, Failure, NULL val, I'm not stopping it, but proc should "
-         "fail here!!\n",
-         __func__);
+        "fail here!!\n",
+        __func__);
     invalid_instruction();
     return;
   }
@@ -393,8 +393,8 @@ void op_BNEQ() {
 
   if (!val) {
     printf("%s, Failure, NULL val, I'm not stopping it, but proc should "
-         "fail here!!\n",
-         __func__);
+        "fail here!!\n",
+        __func__);
     invalid_instruction();
     return;
   }
@@ -416,8 +416,8 @@ void op_LOAD() {
 
   if (val != 1 || val != 2 || val != 4 || val != 8 ) {
     printf("%s, Failure, invalid size/ instruction, trying to load "
-         "something that's wrong",
-         __func__);
+        "something that's wrong",
+        __func__);
     invalid_instruction();
     return;
   }
@@ -446,8 +446,8 @@ void op_STORE() {
 
   if (val != 1 || val != 2 || val != 4 || val != 8 ) {
     printf("%s, Failure, invalid size/ instruction, trying to load "
-         "something that's wrong",
-         __func__);
+        "something that's wrong",
+        __func__);
     invalid_instruction();
     return;
   }
@@ -526,10 +526,10 @@ void op_SW_INTERUPT() {
   }
 
   if (*interrupt_no < SOFTWARE_INTERRUPT_HI_0 ||
-    SOFTWARE_INTERRUPT_LOW_3 < *interrupt_no) {
+      SOFTWARE_INTERRUPT_LOW_3 < *interrupt_no) {
     printf("%s, This is an invalid interrupt, can't trigger %lu from "
-         "software\n",
-         __func__, *interrupt_no);
+        "software\n",
+        __func__, *interrupt_no);
     invalid_instruction();
     return;
   }
