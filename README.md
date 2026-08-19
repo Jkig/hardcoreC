@@ -36,7 +36,7 @@ I'm jumping in the deep end before reading the textbook/ manual, but will go for
 
 # How to test it out 
 ## Assembler
-gcc src/Assembler.cpp src/Assembler_helpers.c -o assembler
+gcc src/Assembler.cc src/Assembler_helpers.c -o assembler
 
 ## Processor/ emulator/ debugger program
 gcc src/processor.c src/implementInstructions.c src/Assembler_helpers.c src/os_like_stuff.c -o proc
