@@ -431,7 +431,7 @@ void op_LOAD() {
     return;
   }
 
-  for (int8_t i=0;i<val;i++) {
+  for (int8_t i = 0; i < val; i++) {
     // TODO: Make sure my byte order is right
     *dst = 0;
     *dst += (ram[pointer_to_mem_as_index + i] << i);
@@ -461,7 +461,7 @@ void op_STORE() {
     return;
   }
 
-  for (int8_t i=0;i<val;i++) {
+  for (int8_t i = 0; i < val; i++) {
     // TODO: Make sure my byte order is right
     ram[pointer_to_mem_as_index + i] = ((*src && (0xFF << i)) >> i);
   }

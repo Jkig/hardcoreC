@@ -39,7 +39,7 @@ void print_regs() {
   printf("   PC:   0x%016lx  SP:  0x%016lx\n", registers.pc,
       registers.sp);
   printf("   Status: 0x%016lx\n\n", registers.status);
-  for (uint8_t i=0;i<GENERAL_PURPOSE_REGISTER_COUNT/2;i++) {
+  for (uint8_t i = 0; i < GENERAL_PURPOSE_REGISTER_COUNT / 2; i++) {
     // I don't need to see everything
     printf("\tgp[%d]:\t0x%016lx\t%ld\n", i, registers.gp[i],
         registers.gp[i]);
@@ -59,7 +59,7 @@ void executeInterrupts() {
   // Just dump the registers on the stack and restore, its actually easier
   // than normal
 
-  for (uint8_t voffset=0; voffset<INTERRUPT_COUNT;voffset++) {
+  for (uint8_t voffset = 0; voffset < INTERRUPT_COUNT; voffset++) {
     while ((interrupt_signals & (1 << voffset)) != 0) {
       // Turn off the interrupt that triggered this, move this into the
       // interrupt implementetion if its ever needed to not happen
@@ -125,7 +125,7 @@ program_actions debug(bool allow_dasm) {
     cmd = getchar();
   } while (cmd == '\n' || cmd == '\r');
 
-  switch(cmd) {
+  switch (cmd) {
     case 'P':
       print_regs();
       action = SKIP_INSTRUCTION;

@@ -25,7 +25,7 @@ void assemble(const char *input_file, const char *output_file) {
   fwrite(&placeholder, sizeof(uint64_t), 1, binary);
 
   placeholder = 0; // clear out the rest of the vector table
-  for (uint8_t i=0;i<INTERRUPT_COUNT-1-2;i++)
+  for (uint8_t i = 0; i < INTERRUPT_COUNT - 1 - 2; i++)
     fwrite(&placeholder, sizeof(uint64_t), 1, binary);
 
   const char *text = "programmed!!Hi!!";
