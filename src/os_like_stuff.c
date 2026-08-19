@@ -36,7 +36,7 @@ void interrupt(uint8_t interrupt_no) {
       }
       ram[i++] = '\0';
     }
-  } else if(interrupt_sub_number == WRITE) {
+  } else if (interrupt_sub_number == WRITE) {
     if (interrupt_auxiliary_info == STD_OUT) {
       printf("> %s", &ram[write_buff]);// hopefully it null termitates lol
     }

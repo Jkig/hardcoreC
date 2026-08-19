@@ -309,7 +309,7 @@ void op_OR_SRC_SRC() {
   uint64_t *srcB = get_register_ptr(raw_instruction.ins.regC);
   registers.pc += sizeof(Instruction);
 
-  if (!dst || !srcA  || !srcB) {
+  if (!dst || !srcA || !srcB) {
     printf("%s, Failure, NULL register\n", __func__);
     invalid_instruction();
     return;
@@ -414,7 +414,7 @@ void op_LOAD() {
   // Encoding the bytes size as val
   FETCH_2REGS(dst, src, val);
 
-  if (val != 1 || val != 2 || val != 4 || val != 8 ) {
+  if (val != 1 || val != 2 || val != 4 || val != 8) {
     printf("%s, Failure, invalid size/ instruction, trying to load "
         "something that's wrong",
         __func__);
@@ -423,7 +423,7 @@ void op_LOAD() {
   }
 
   uint64_t pointer_to_mem_as_index = *src;
-  if ((pointer_to_mem_as_index + (val-1) ) >= RAM_SIZE_BYTES) {
+  if ((pointer_to_mem_as_index + (val - 1)) >= RAM_SIZE_BYTES) {
     // Shouldn't really ever load 0, but I'm modeling the hardware as
     // here, so its fine
     printf("%s, Memory out of range!", __func__);
@@ -444,7 +444,7 @@ void op_STORE() {
   // Encoding the bytes size as val
   FETCH_2REGS(dst, src, val);
 
-  if (val != 1 || val != 2 || val != 4 || val != 8 ) {
+  if (val != 1 || val != 2 || val != 4 || val != 8) {
     printf("%s, Failure, invalid size/ instruction, trying to load "
         "something that's wrong",
         __func__);
@@ -453,7 +453,7 @@ void op_STORE() {
   }
 
   uint64_t pointer_to_mem_as_index = *dst;
-  if ((pointer_to_mem_as_index + (val-1) ) >= RAM_SIZE_BYTES) {
+  if ((pointer_to_mem_as_index + (val - 1)) >= RAM_SIZE_BYTES) {
     // Shouldn't really ever load 0, but I'm modeling the hardware as
     // here, so its fine
     printf("%s, Memory out of range!", __func__);
