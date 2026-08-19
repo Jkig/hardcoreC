@@ -7,13 +7,13 @@
 
 
 int main(void) {
-    uint8_t firstvar = 1;
+  uint8_t firstvar = 1;
 
-    if (firstvar > 0) {
-        printf("wow, something kinda worked!!\n");
-    } else {
-        printf("Something broke?\n");
-        return 1;
-    }
-    return 0;
+  if (firstvar > 0) {
+    printf("wow, something kinda worked!!\n");
+  } else {
+    printf("Something broke?\n");
+    return 1;
+  }
+  return 0;
 }

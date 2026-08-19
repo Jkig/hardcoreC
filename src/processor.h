@@ -3,56 +3,56 @@
 #include <assert.h>
 #include <stdint.h>
 
-#define RAM_SIZE_BYTES                        (1024 * 1024) // 1 mb of ram
+#define RAM_SIZE_BYTES            (1024 * 1024) // 1 mb of ram
 #define GENERAL_PURPOSE_REGISTER_COUNT  16
 
-#define INTERRUPT_SUB_NUMBER            8
-#define INTERRUPT_AUX_NUMBER            9
-#define INTERRUPT_POINTER_1             10
-#define INTERRUPT_POINTER_2             11
+#define INTERRUPT_SUB_NUMBER      8
+#define INTERRUPT_AUX_NUMBER      9
+#define INTERRUPT_POINTER_1       10
+#define INTERRUPT_POINTER_2       11
 
 typedef void (*instruction)();
 
 
 typedef struct {
-    uint64_t pc;
-    uint64_t sp;
-    uint64_t status;
-    uint64_t gp[GENERAL_PURPOSE_REGISTER_COUNT];
+  uint64_t pc;
+  uint64_t sp;
+  uint64_t status;
+  uint64_t gp[GENERAL_PURPOSE_REGISTER_COUNT];
 } CPU;
 
 typedef enum {
-    INVALID_REGISTER,
-    REG_PC,
-    REG_SP,
-    REG_STATUS,
-    // General purpose arrays will be in an array here, going from [gp0,
-    // gp<GENERAL_PURPOSE_REGISTER_COUNT-1>] inclusive
-    GP_REGISTERS_OFFSET
+  INVALID_REGISTER,
+  REG_PC,
+  REG_SP,
+  REG_STATUS,
+  // General purpose arrays will be in an array here, going from [gp0,
+  // gp<GENERAL_PURPOSE_REGISTER_COUNT-1>] inclusive
+  GP_REGISTERS_OFFSET
 } RegisterId;
 
 #define LAST_REGISTER_BEFORE_GP (GP_REGISTERS_OFFSET - 1)
 
 typedef enum {
-    ZERO        = (1 << 0),
-    NEGATIVE    = (1 << 1),
-    CARRY       = (1 << 2),
-    OVERFLOW    = (1 << 3),
+  ZERO    = (1 << 0),
+  NEGATIVE  = (1 << 1),
+  CARRY     = (1 << 2),
+  OVERFLOW  = (1 << 3),
 
-    EQUAL       = (1 << 4),
-    LESS        = (1 << 5),
-    GREATER     = (1 << 6),
+  EQUAL     = (1 << 4),
+  LESS    = (1 << 5),
+  GREATER   = (1 << 6),
 
-    NOT_STARTED = (1 << 7),
-    RUNNING     = (1 << 8),
-    FAILED      = (1 << 9),
-    EXIT        = (1 << 10)
+  NOT_STARTED = (1 << 7),
+  RUNNING   = (1 << 8),
+  FAILED    = (1 << 9),
+  EXIT    = (1 << 10)
 } StatusRegisterBitDefinitions;
 
 typedef enum {
-    COMPUTATION_FLAGS   = (ZERO | NEGATIVE | CARRY | OVERFLOW),
-    COMPARISON_FLAGS    = (EQUAL | LESS | GREATER),
-    PROGAM_STATE        = (NOT_STARTED | RUNNING | FAILED | EXIT),
+  COMPUTATION_FLAGS   = (ZERO | NEGATIVE | CARRY | OVERFLOW),
+  COMPARISON_FLAGS  = (EQUAL | LESS | GREATER),
+  PROGAM_STATE    = (NOT_STARTED | RUNNING | FAILED | EXIT),
 } StatusRegisterMasks;
 // some interrupts will be used for certain puprposes commonly
 
@@ -62,56 +62,56 @@ typedef enum {
 
 
 typedef enum {
-    RESET,
-    NON_MASKABLE,
-    HARDFAULT,
-    MEM_FAULT,
-    BUS_FAULT,
-    SOFT_FAULT_0,
-    SOFT_FAULT_1,
-    SOFT_FAULT_2,
-    SOFT_FAULT_3,
-    SOFTWARE_INTERRUPT_HI_0,
-    SOFTWARE_INTERRUPT_HI_1,
-    SOFTWARE_INTERRUPT_HI_2,
-    SOFTWARE_INTERRUPT_HI_3,
-    SYSTICK,
-    SYSTICK_EXT,
-    SOFTWARE_INTERRUPT_LOW_0,
-    SOFTWARE_INTERRUPT_LOW_1,
-    SOFTWARE_INTERRUPT_LOW_2,
-    SOFTWARE_INTERRUPT_LOW_3,
+  RESET,
+  NON_MASKABLE,
+  HARDFAULT,
+  MEM_FAULT,
+  BUS_FAULT,
+  SOFT_FAULT_0,
+  SOFT_FAULT_1,
+  SOFT_FAULT_2,
+  SOFT_FAULT_3,
+  SOFTWARE_INTERRUPT_HI_0,
+  SOFTWARE_INTERRUPT_HI_1,
+  SOFTWARE_INTERRUPT_HI_2,
+  SOFTWARE_INTERRUPT_HI_3,
+  SYSTICK,
+  SYSTICK_EXT,
+  SOFTWARE_INTERRUPT_LOW_0,
+  SOFTWARE_INTERRUPT_LOW_1,
+  SOFTWARE_INTERRUPT_LOW_2,
+  SOFTWARE_INTERRUPT_LOW_3,
 
 // Done with core interrupts, now handing some more to peropherals, OS, etc...?
-    PERIPHERAL_I2C,
-    PERIPHERAL_SPI,
-    PERIPHERAL_GPIO,
-    PERIPHERAL_PCIE,
-    PERIPHERAL_DEBUGGER,
-    INTERRUPT_COUNT,
+  PERIPHERAL_I2C,
+  PERIPHERAL_SPI,
+  PERIPHERAL_GPIO,
+  PERIPHERAL_PCIE,
+  PERIPHERAL_DEBUGGER,
+  INTERRUPT_COUNT,
 } Interrupts;
 
 static_assert(INTERRUPT_COUNT <= 64, "Too many interrupts");
 
 typedef enum {
-    UNUSED,
-    READ,
-    WRITE,
+  UNUSED,
+  READ,
+  WRITE,
 } Software_Interrupts_low_1;
 
 
 typedef enum {
-    SDT_IN,
-    STD_OUT,
-    STD_ERR,
+  SDT_IN,
+  STD_OUT,
+  STD_ERR,
 } File_descriptors;
 
 
 // Management of the process that runs the CPU
 typedef enum {
-    CONTINUE_PROGRAM,
-    SKIP_INSTRUCTION,
-    END_PROGRAM
+  CONTINUE_PROGRAM,
+  SKIP_INSTRUCTION,
+  END_PROGRAM
 } program_actions;
 
 #endif // EMULATE_PROCESSOR_H

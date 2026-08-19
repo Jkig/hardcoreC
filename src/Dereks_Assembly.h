@@ -15,10 +15,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 StringToInt REGISTER_NAMES[] = {
-    {"pc",      REG_PC},
-    {"sp",      REG_SP},
-    {"status",  REG_STATUS},
-    {"gp",      GP_REGISTERS_OFFSET},
+  {"pc",    REG_PC},
+  {"sp",    REG_SP},
+  {"status",  REG_STATUS},
+  {"gp",    GP_REGISTERS_OFFSET},
 };
 
 
@@ -27,44 +27,44 @@ StringToInt REGISTER_NAMES[] = {
 ////////////////////////////////////////////////////////////////////////////////
 
 StringToInt direct_opcodes[] = {
-    {"noop",    NOOP},
-    {"load",    LOAD},
-    {"store",   STORE},
-    {"b",       B},
-    {"beq",     BEQ},
-    {"bneq",    BNEQ},// TODO: I think I want to get rid of this, I'm keeping
-                      // it streamlined
+  {"noop",  NOOP},
+  {"load",  LOAD},
+  {"store",   STORE},
+  {"b",     B},
+  {"beq",   BEQ},
+  {"bneq",  BNEQ},// TODO: I think I want to get rid of this, I'm keeping
+            // it streamlined
 };
 
 /* All instructions after this are really multiple opcodes, I'll call them
  * variations
- *    For example, you can move an immediate value into some destination
- *    register, or you can move some the contents of some other register into
- *    the destination register
+ *  For example, you can move an immediate value into some destination
+ *  register, or you can move some the contents of some other register into
+ *  the destination register
  *
  * Variations opcode numbers will always start with src, then immediate
  */
 StringToInt mov[] = {
-    {"mov",     MOV_REG},
-    // Mov has 3 variations, src -> dst, immediate to lowhalf of dst or
-    // highhalf of dst
+  {"mov",   MOV_REG},
+  // Mov has 3 variations, src -> dst, immediate to lowhalf of dst or
+  // highhalf of dst
 };
 
 StringToInt cmp[] = {
-    {"cmp",     CMP_SRC},
+  {"cmp",   CMP_SRC},
 };
 
 StringToInt arithmetic_instruction_to_opcode[] = {
-    {"add",     ADD_SRC_SRC},
-    {"sub",     SUB_SRC_SRC},
-    {"mul",     MUL_SRC_SRC},
-    {"div",     DIV_SRC_SRC},
-    {"mod",     MOD_SRC_SRC},
-    {"lsh",     LSH_SRC_SRC},
-    {"rsh",     RSH_SRC_SRC},
-    {"and",     AND_SRC_SRC},
-    {"or",      OR_SRC_SRC},
-    {"xor",     XOR_SRC_SRC},
+  {"add",   ADD_SRC_SRC},
+  {"sub",   SUB_SRC_SRC},
+  {"mul",   MUL_SRC_SRC},
+  {"div",   DIV_SRC_SRC},
+  {"mod",   MOD_SRC_SRC},
+  {"lsh",   LSH_SRC_SRC},
+  {"rsh",   RSH_SRC_SRC},
+  {"and",   AND_SRC_SRC},
+  {"or",    OR_SRC_SRC},
+  {"xor",   XOR_SRC_SRC},
 };
 
 #endif // DEREKS_ASSEMBLY_H

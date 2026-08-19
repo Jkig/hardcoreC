@@ -8,19 +8,19 @@
 
 
 int32_t add_something(int32_t a, int32_t b) {
-    printf("adding some things together\n");
-    printf("a: ");
-    print_int(a);
-    printf(" b: ");
-    print_int(b);
-    printf("\n");
-    return a + b;
+  printf("adding some things together\n");
+  printf("a: ");
+  print_int(a);
+  printf(" b: ");
+  print_int(b);
+  printf("\n");
+  return a + b;
 }
 
 int main(void) {
-    uint32_t firstvar = 1;
-    uint32_t endval = 0;
+  uint32_t firstvar = 1;
+  uint32_t endval = 0;
 
-    endval = add_something(firstvar, 8);
-    print_int(endval);
+  endval = add_something(firstvar, 8);
+  print_int(endval);
 }
