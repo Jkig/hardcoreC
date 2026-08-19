@@ -25,14 +25,16 @@ extern bool print_execute_instruction;
 ////////////////////////////////////////////////////////////////////////////////
 
 void invalid_instruction() {
-    // TODO: how should I fail, one msg and a function call, swap this in,, I think update program state
+    // TODO: how should I fail, one msg and a function call, swap this in,, I
+    // think update program state
 }
 
 uint64_t *get_register_ptr(uint8_t reg_id) {
     if (reg_id < 1) {
         printf("%s, Failure, register ID of 0?\n", __func__);
         return NULL;
-    } else if (reg_id > GENERAL_PURPOSE_REGISTER_COUNT + LAST_REGISTER_BEFORE_GP) {
+    } else if (reg_id >
+               GENERAL_PURPOSE_REGISTER_COUNT + LAST_REGISTER_BEFORE_GP) {
         printf("%s, Failure, register ID too high?\n", __func__);
         return NULL;
     }
@@ -103,10 +105,13 @@ void op_NOOP() {
     registers.pc += sizeof(Instruction);
 }
 
-// TODO: op_TRUE_NOOP_SPIN -> needs interrupt to escape, same as op_INVALID, empty
+// TODO: op_TRUE_NOOP_SPIN -> needs interrupt to escape, same as op_INVALID,
+// empty
 
 void op_MOV_REG() {
-    if (print_execute_instruction) printf("%s: exec\n", __func__); // Not seen in the macro here
+    if (print_execute_instruction) {
+        printf("%s: exec\n", __func__); // Not seen in the macro here
+    }
     InstructionBits raw_instruction = {0};
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
     uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
@@ -123,7 +128,9 @@ void op_MOV_REG() {
 }
 
 void op_MOV_IMM_TO_LO() {
-    if (print_execute_instruction) printf("%s: exec\n", __func__); // Not seen in the macro here
+    if (print_execute_instruction) {
+        printf("%s: exec\n", __func__); // Not seen in the macro here
+    }
     InstructionBits raw_instruction = {0};
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
     uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
@@ -141,7 +148,9 @@ void op_MOV_IMM_TO_LO() {
 }
 
 void op_MOV_IMM_TO_HI() {
-    if (print_execute_instruction) printf("%s: exec\n", __func__); // Not seen in the macro here
+    if (print_execute_instruction) {
+        printf("%s: exec\n", __func__); // Not seen in the macro here
+    }
     InstructionBits raw_instruction = {0};
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
     uint64_t *dst = get_register_ptr(raw_instruction.ins.regA);
@@ -204,7 +213,8 @@ void op_DIV_SRC_SRC() {
 
     if (*srcB == 0) {
         printf("divide by zero!!");
-        // invalid_instruction();// TODO: do I care about this, just a status update?
+        // invalid_instruction();// TODO: do I care about this, just a status
+        // update?
         // TODO: Update Status register (beautiful side effects)
         *dst = 0;
     } else {
@@ -217,7 +227,8 @@ void op_DIV_SRC_IMM() {
 
     if (val == 0) {
         printf("divide by zero!!");
-        // invalid_instruction();// TODO: do I care about this, just a status update?
+        // invalid_instruction();// TODO: do I care about this, just a status
+        // update?
         // TODO: Update Status register (beautiful side effects)
         *dst = 0;
     } else {
@@ -243,7 +254,8 @@ void op_MOD_SRC_IMM() {
 
     if (val == 0) {
         printf("divide by zero!!");
-        // invalid_instruction();// TODO: do I care about this, just a status update?
+        // invalid_instruction();// TODO: do I care about this, just a status
+        // update?
         // TODO: Update Status register (beautiful side effects)
         *dst = 0;
     } else {
@@ -324,74 +336,96 @@ void op_XOR_SRC_IMM() {
     *dst = *src ^ val;
 }
 
-// I know that this *should* be a bit different, but I'm making assembler simpler, so just load the value to PC
+// I know that this *should* be a bit different, but I'm making assembler
+// simpler, so just load the value to PC
 void op_B() {
-    // TODO: Should I general branch be able to b to some register? I know its already fairly limited
+    // TODO: Should I general branch be able to b to some register? I know its
+    // already fairly limited
     InstructionBits raw_instruction = {0};
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
     uint32_t val = raw_instruction.ins.val;
 
     if (!val) {
-        printf("%s, Failure, NULL val, I'm not stopping it, but proc should fail here!!\n", __func__);
+        printf("%s, Failure, NULL val, I'm not stopping it, but proc should "
+               "fail here!!\n",
+               __func__);
         registers.pc = 0;// So its easy to see problem still
         invalid_instruction();
         return;
     }
-    registers.pc = val;// The value is assumed to always fit in the low 32 bits, this is a fine assumption
+    // The value is assumed to always fit in the low 32 bits, this is a fine
+    // assumption
+    registers.pc = val;
 }
 
 void op_BEQ() {
-    if (print_execute_instruction) printf("%s: exec\n", __func__); // Not seen in the macro here
+    if (print_execute_instruction) {
+        printf("%s: exec\n", __func__); // Not seen in the macro here
+    }
     InstructionBits raw_instruction = {0};
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
     uint32_t val = raw_instruction.ins.val;
 
     if (!val) {
-        printf("%s, Failure, NULL val, I'm not stopping it, but proc should fail here!!\n", __func__);
+        printf("%s, Failure, NULL val, I'm not stopping it, but proc should "
+               "fail here!!\n",
+               __func__);
         invalid_instruction();
         return;
     }
 
     if (registers.status && EQUAL) {
-        registers.pc = val;// The value is assumed to always fit in the low 32 bits, this is a fine assumption
+        // The value is assumed to always fit in the low 32 bits, this is a
+        // fine assumption
+        registers.pc = val;
     } else {
         registers.pc += sizeof(Instruction);
     }
 }
 
 void op_BNEQ() {
-    if (print_execute_instruction) printf("%s: exec\n", __func__); // Not seen in the macro here
+    if (print_execute_instruction) {
+        printf("%s: exec\n", __func__); // Not seen in the macro here
+    }
     InstructionBits raw_instruction = {0};
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
     uint32_t val = raw_instruction.ins.val;
 
     if (!val) {
-        printf("%s, Failure, NULL val, I'm not stopping it, but proc should fail here!!\n", __func__);
+        printf("%s, Failure, NULL val, I'm not stopping it, but proc should "
+               "fail here!!\n",
+               __func__);
         invalid_instruction();
         return;
     }
 
     if (!(registers.status && EQUAL)) {
-        registers.pc = val;// The value is assumed to always fit in the low 32 bits, this is a fine assumption
+        // The value is assumed to always fit in the low 32 bits, this is a
+        // fine assumption
+        registers.pc = val;
     } else {
         registers.pc += sizeof(Instruction);
     }
 }
 
 void op_LOAD() {
-    // Usage: load (into register A), (the value from the address B), (with the size in bytes)
+    // Usage: load (into register A), (the value from the address B), (with
+    // the size in bytes)
     // Encoding the bytes size as val
     FETCH_2REGS(dst, src, val);
 
     if (val != 1 || val != 2 || val != 4 || val != 8 ) {
-        printf("%s, Failure, invalid size/ instruction, trying to load something that's wrong", __func__);
+        printf("%s, Failure, invalid size/ instruction, trying to load "
+               "something that's wrong",
+               __func__);
         invalid_instruction();
         return;
     }
 
     uint64_t pointer_to_mem_as_index = *src;
     if ((pointer_to_mem_as_index + (val-1) ) >= RAM_SIZE_BYTES) {
-        // Shouldn't really ever load 0, but I'm modeling the hardware as here, so its fine
+        // Shouldn't really ever load 0, but I'm modeling the hardware as
+        // here, so its fine
         printf("%s, Memory out of range!", __func__);
         invalid_instruction();
         return;
@@ -405,19 +439,23 @@ void op_LOAD() {
 }
 
 void op_STORE() {
-    // Usage: load (into register A), (the value from the address B), (with the size in bytes)
+    // Usage: load (into register A), (the value from the address B), (with
+    // the size in bytes)
     // Encoding the bytes size as val
     FETCH_2REGS(dst, src, val);
 
     if (val != 1 || val != 2 || val != 4 || val != 8 ) {
-        printf("%s, Failure, invalid size/ instruction, trying to load something that's wrong", __func__);
+        printf("%s, Failure, invalid size/ instruction, trying to load "
+               "something that's wrong",
+               __func__);
         invalid_instruction();
         return;
     }
 
     uint64_t pointer_to_mem_as_index = *dst;
     if ((pointer_to_mem_as_index + (val-1) ) >= RAM_SIZE_BYTES) {
-        // Shouldn't really ever load 0, but I'm modeling the hardware as here, so its fine
+        // Shouldn't really ever load 0, but I'm modeling the hardware as
+        // here, so its fine
         printf("%s, Memory out of range!", __func__);
         invalid_instruction();
         return;
@@ -430,7 +468,9 @@ void op_STORE() {
 }
 
 void op_CMP_IMM() {
-    if (print_execute_instruction) printf("%s: exec\n", __func__); // Not seen in the macro here
+    if (print_execute_instruction) {
+        printf("%s: exec\n", __func__); // Not seen in the macro here
+    }
     InstructionBits raw_instruction = {0};
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
     uint64_t *cmp_reg = get_register_ptr(raw_instruction.ins.regA);
@@ -448,7 +488,9 @@ void op_CMP_IMM() {
 }
 
 void op_CMP_SRC() {
-    if (print_execute_instruction) printf("%s: exec\n", __func__); // Not seen in the macro here
+    if (print_execute_instruction) {
+        printf("%s: exec\n", __func__); // Not seen in the macro here
+    }
     InstructionBits raw_instruction = {0};
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
     uint64_t *cmp_reg1 = get_register_ptr(raw_instruction.ins.regA);
@@ -466,12 +508,15 @@ void op_CMP_SRC() {
 }
 
 void op_SW_INTERUPT() {
-    if (print_execute_instruction) printf("%s: exec\n", __func__); // Not seen in the macro here
+    if (print_execute_instruction) {
+        printf("%s: exec\n", __func__); // Not seen in the macro here
+    }
     InstructionBits raw_instruction = {0};
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
     registers.pc += sizeof(Instruction);
 
-    /// interrupt_no is a register holding the value for the interrupt to trigger from software
+    /// interrupt_no is a register holding the value for the interrupt to
+    /// trigger from software
     uint64_t *interrupt_no = get_register_ptr(raw_instruction.ins.regA);
 
     if (!interrupt_no) {
@@ -480,8 +525,11 @@ void op_SW_INTERUPT() {
         return;
     }
 
-    if (*interrupt_no < SOFTWARE_INTERRUPT_HI_0 || SOFTWARE_INTERRUPT_LOW_3 < *interrupt_no) {
-        printf("%s, This is an invalid interrupt, can't trigger %lu from software\n", __func__, *interrupt_no);
+    if (*interrupt_no < SOFTWARE_INTERRUPT_HI_0 ||
+        SOFTWARE_INTERRUPT_LOW_3 < *interrupt_no) {
+        printf("%s, This is an invalid interrupt, can't trigger %lu from "
+               "software\n",
+               __func__, *interrupt_no);
         invalid_instruction();
         return;
     }
@@ -491,7 +539,8 @@ void op_SW_INTERUPT() {
 
 // Globals
 instruction instruction_table[OPCODE_COUNT] = {
-    // Just copy in from Opcode definition, and swap place by place with the op_INSTRUCTION_var
+    // Just copy in from Opcode definition, and swap place by place with the
+    // op_INSTRUCTION_var
     op_INVALID,
     op_NOOP,
     op_LOAD,

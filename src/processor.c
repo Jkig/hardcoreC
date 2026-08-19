@@ -13,7 +13,8 @@
 #include "os_like_stuff.h"
 #include "processor.h"
 
-// I'll only have 2 real syscalls, in/out, this program can catch them, in and out through the console that I'm actually using
+// I'll only have 2 real syscalls, in/out, this program can catch them, in and
+// out through the console that I'm actually using
 // Could trigger interrupts manually from annother thread later
 
 
@@ -26,37 +27,52 @@ CPU cpu;
 alignas(8) uint8_t ram[RAM_SIZE_BYTES];
 volatile uint64_t interrupt_signals;    // bit field
 uint64_t *vtable_start = (uint64_t *) (uint64_t) &ram[8];
-uint64_t program_return = 0; // TODO: I think I'll set up a convention that at the end of a program I read one of the GPs, for some status
+uint64_t program_return = 0;
+// TODO: I think I'll set up a convention that at the end of a program I read
+// one of the GPs, for some status
 
 
 bool print_execute_instruction = false;
 
 
 void print_regs() {
-    printf("   PC:     0x%016lx    SP:  0x%016lx\n", registers.pc, registers.sp);
+    printf("   PC:     0x%016lx    SP:  0x%016lx\n", registers.pc,
+           registers.sp);
     printf("   Status: 0x%016lx\n\n", registers.status);
-    for (uint8_t i=0;i<GENERAL_PURPOSE_REGISTER_COUNT/2;i++) {// I don't need to see everything
-        printf("\tgp[%d]:\t0x%016lx\t%ld\n", i, registers.gp[i], registers.gp[i]);
+    for (uint8_t i=0;i<GENERAL_PURPOSE_REGISTER_COUNT/2;i++) {
+        // I don't need to see everything
+        printf("\tgp[%d]:\t0x%016lx\t%ld\n", i, registers.gp[i],
+               registers.gp[i]);
     }
     printf("\n");
 }
 
 
 void executeInterrupts() {
-    // lowest will be highest priority if there are multiple, so lowest address in the vector table first
-    // Its a bare metal program, so the user gets to define the interrupts, but I have to do the work to context switch here (like hardware would)
+    // lowest will be highest priority if there are multiple, so lowest
+    // address in the vector table first
+    // Its a bare metal program, so the user gets to define the interrupts,
+    // but I have to do the work to context switch here (like hardware would)
     
-    // Set up for the context switch, I don't have to do it in .dasm, "the hardware does it"
-    // Just dump the registers on the stack and restore, its actually easier than normal
+    // Set up for the context switch, I don't have to do it in .dasm, "the
+    // hardware does it"
+    // Just dump the registers on the stack and restore, its actually easier
+    // than normal
 
     for (uint8_t voffset=0; voffset<INTERRUPT_COUNT;voffset++) {
         while ((interrupt_signals & (1 << voffset)) != 0) {
-            interrupt_signals &= ~(1 << voffset);// Turn off the interrupt that triggered this, move this into the interrupt implementetion if its ever needed to not happen
+            // Turn off the interrupt that triggered this, move this into the
+            // interrupt implementetion if its ever needed to not happen
+            interrupt_signals &= ~(1 << voffset);
             if (voffset <= SYSTICK)
-                registers.pc = vtable_start[voffset]; // bare metal interrupts, allow programmer to specify
+                // bare metal interrupts, allow programmer to specify
+                registers.pc = vtable_start[voffset];
             else
-                interrupt(voffset);// OS would catch these, but right now I'm implemeintg them in a way that feels like hw?
-            // Technically this means I've left most of the vector table unreachable, that's fine, I have way more interrupts than I need
+                // OS would catch these, but right now I'm implemeintg them in
+                // a way that feels like hw?
+                interrupt(voffset);
+            // Technically this means I've left most of the vector table
+            // unreachable, that's fine, I have way more interrupts than I need
         }
         // then execute until it returns? this still needs work
     }
@@ -71,7 +87,8 @@ void execute() {
     }
     memcpy(&raw_instruction.raw, &ram[registers.pc], sizeof(Instruction));
     if (print_execute_instruction) print_instruction(raw_instruction.ins);
-    instruction_table[raw_instruction.ins.opcode]();// I/O is a bit special, but I just put it in here
+    // I/O is a bit special, but I just put it in here
+    instruction_table[raw_instruction.ins.opcode]();
 }
 
 size_t load_file_to_ram(const char *filename) {
@@ -94,10 +111,13 @@ size_t load_file_to_ram(const char *filename) {
 }
 
 program_actions debug(bool allow_dasm) {
-    // TODO: latere I'll implement a lot larger debug mode, but for now just step, print registers, and 
-    // adding a full on GDB isn't absolutely crazy hard. For now just print a list of addresses for the functions, expand it later
+    // TODO: latere I'll implement a lot larger debug mode, but for now just
+    // step, print registers, and
+    // adding a full on GDB isn't absolutely crazy hard. For now just print a
+    // list of addresses for the functions, expand it later
     
-    // I think I want a couple levels of debuging, one for later is more for debugging C, and I want to be able to place anything in any register.
+    // I think I want a couple levels of debuging, one for later is more for
+    // debugging C, and I want to be able to place anything in any register.
     program_actions action = CONTINUE_PROGRAM;
     printf(".");
     int cmd;
@@ -111,11 +131,13 @@ program_actions debug(bool allow_dasm) {
             action = SKIP_INSTRUCTION;
             break;
         case 'p':
-            // read address from user and print the contents of that address in RAM
+            // read address from user and print the contents of that address in
+            // RAM
             printf("Enter address to print: ");
             uint64_t addr;
             scanf("%lx", &addr);
-            printf("Contents at address %016lx: %016lx\n", addr, *(uint64_t *)(&ram[addr]));
+            printf("Contents at address %016lx: %016lx\n", addr,
+                   *(uint64_t *)(&ram[addr]));
             action = SKIP_INSTRUCTION;
             break;
         case 's':
@@ -151,7 +173,8 @@ program_actions debug(bool allow_dasm) {
             }
 
             registers.pc = 0;
-            memcpy(&ram[registers.pc], &next_instruction.raw, sizeof(Instruction));
+            memcpy(&ram[registers.pc], &next_instruction.raw,
+                   sizeof(Instruction));
             break;
         default:
             break;
@@ -163,7 +186,9 @@ program_actions debug(bool allow_dasm) {
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
-        fprintf(stderr, "Usage: %s <binary_filename> --[options debug|dasm]\n", argv[0]);
+        fprintf(stderr,
+                "Usage: %s <binary_filename> --[options debug|dasm]\n",
+                argv[0]);
         return 1;
     }
 
@@ -179,7 +204,11 @@ int main(int argc, char *argv[]) {
             dasm_interpereter = true;
         } else {
             fprintf(stderr, "Unknown option: %s\n", argv[2]);
-            fprintf(stderr, "Usage: %s <binary_filename> --[options debug|dasm]\nProvide the name of a binary file and optionally enable debug mode", argv[0]);
+            fprintf(stderr,
+                    "Usage: %s <binary_filename> --[options debug|dasm]\n"
+                    "Provide the name of a binary file and optionally enable "
+                    "debug mode",
+                    argv[0]);
             return 1;
         }
     }
@@ -189,14 +218,18 @@ int main(int argc, char *argv[]) {
         print_execute_instruction = true;
         debug_mode = true;
         dasm_interpereter = true;
-        printf("Running in dasm interpereter mode, no binary file will be loaded into RAM\n");
+        printf("Running in dasm interpereter mode, no binary file will be "
+               "loaded into RAM\n");
     } else {
         ssize_t loaded = load_file_to_ram(argv[1]);
         if (loaded == 0 && !dasm_interpereter) {
-            fprintf(stderr, "Failed to load file into RAM\nEmpty binary file or read error\n");
+            fprintf(stderr,
+                    "Failed to load file into RAM\n"
+                    "Empty binary file or read error\n");
             return 1;
         } else if (loaded != 0 && dasm_interpereter) {
-            printf("No binary file loaded, but running in dasm interpereter mode, so this is fine\n");
+            printf("No binary file loaded, but running in dasm interpereter "
+                   "mode, so this is fine\n");
         }
     }
 
@@ -218,7 +251,10 @@ int main(int argc, char *argv[]) {
         if ((registers.status & EXIT) != 0) break;
     }
 
-    while (true) if (debug(false)) break;// So I can see state of program after exit
+    while (true) {
+        // So I can see state of program after exit
+        if (debug(false)) break;
+    }
 
     return program_return;
 }

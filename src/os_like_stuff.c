@@ -15,7 +15,8 @@ extern uint8_t ram[RAM_SIZE_BYTES];
 // Not locking myself itno this, but when a softare interrupt happens
 void interrupt(uint8_t interrupt_no) {
     if (interrupt_no != SOFTWARE_INTERRUPT_LOW_1) {
-        printf("I've only implemented SOFTWARE_INTERRUPT_LOW_1 for software interrupts thus far");
+        printf("I've only implemented SOFTWARE_INTERRUPT_LOW_1 for software "
+               "interrupts thus far");
         return;
     }
 

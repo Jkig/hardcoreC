@@ -15,10 +15,13 @@ void assemble(const char *input_file, const char *output_file) {
     FILE *binary = fopen(output_file, "wb");
 
     // To start, super limited version
-    uint64_t placeholder = sizeof(uint64_t) * 100; // I'm using the stack yet, but I'll put it far out
+    // I'm using the stack yet, but I'll put it far out
+    uint64_t placeholder = sizeof(uint64_t) * 100;
     fwrite(&placeholder, sizeof(uint64_t), 1, binary);
 
-    placeholder = sizeof(uint64_t) * (INTERRUPT_COUNT + 1); // hardcode _start right after vector table, and have reset vector point there
+    // hardcode _start right after vector table, and have reset vector point
+    // there
+    placeholder = sizeof(uint64_t) * (INTERRUPT_COUNT + 1);
     fwrite(&placeholder, sizeof(uint64_t), 1, binary);
 
     placeholder = 0; // clear out the rest of the vector table
@@ -47,7 +50,9 @@ void assemble(const char *input_file, const char *output_file) {
 
 int main(int argc, char *argv[]) {
     // Goes from .dasm (Derek's assembly) file to a binary file
-    // TODO: think about how I do the increment instruction for when I move in larget than 32 bit immediates, basically its just 2 instructions, not too complicated, just have to increment the running offset
+    // TODO: think about how I do the increment instruction for when I move in
+    // larget than 32 bit immediates, basically its just 2 instructions, not
+    // too complicated, just have to increment the running offset
     // take a file name etc..
     const char *input_file = NULL;
     const char *output_file = NULL;
@@ -62,7 +67,8 @@ int main(int argc, char *argv[]) {
             if (i < argc) {
                 output_file = argv[i];
             } else {
-                printf("Usage: %s <file_name>.c -o <binary_file_name>\n", argv[0]);
+                printf("Usage: %s <file_name>.c -o <binary_file_name>\n",
+                       argv[0]);
                 return 1;
             }
         } else {

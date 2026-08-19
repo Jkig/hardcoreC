@@ -15,7 +15,8 @@
 extern "C" {
 #endif
 
-int lookup_value(const StringToInt *table, size_t count, const char *key, uint8_t *out_value) {
+int lookup_value(const StringToInt *table, size_t count, const char *key,
+                 uint8_t *out_value) {
     for (size_t i = 0; i < count; i++) {
         if (strcmp(table[i].key, key) == 0) {
             *out_value = table[i].value;
@@ -31,7 +32,8 @@ void parse_line(const char *line, InstructionStrings *inst) {
     memset(inst, 0, sizeof(InstructionStrings));
 
     if (line[0] != '\t' && line[0] != '>') {
-        printf("shouldn't have seen a line that wasn't starting with \\t in this function\n");
+        printf("shouldn't have seen a line that wasn't starting with \\t "
+               "in this function\n");
         return;
     }
 
@@ -94,12 +96,15 @@ int get_reg_number(const char *s) {
     if (s[0] == 'g' && s[1] == 'p')
         return atoi(&s[2]) + GP_REGISTERS_OFFSET;
 
-    if (lookup_value(REGISTER_NAMES, sizeof(REGISTER_NAMES) / sizeof(StringToInt), s, &register_number))
+    if (lookup_value(REGISTER_NAMES,
+                     sizeof(REGISTER_NAMES) / sizeof(StringToInt),
+                     s, &register_number))
         return register_number;
     return 0;
 }
 
-// maybe I make an intermediate that goes to the real op, and reorders, and space sepearteds the arguments
+// maybe I make an intermediate that goes to the real op, and reorders, and
+// space sepearteds the arguments
 // zero is an invalid instruction
 Instruction build_one_binary_instruction(const char *line) {
     Instruction invalid_res = {0};
@@ -113,8 +118,12 @@ Instruction build_one_binary_instruction(const char *line) {
 
     uint8_t opcode;
     Instruction res = {0};
-    if (lookup_value(arithmetic_instruction_to_opcode, sizeof(arithmetic_instruction_to_opcode) / sizeof(StringToInt), elements.op, &opcode)) {
-        if (elements.arg1[0] == '\0' || elements.arg2[0] == '\0' || elements.arg2[0] == '\0') {
+    if (lookup_value(arithmetic_instruction_to_opcode,
+                     sizeof(arithmetic_instruction_to_opcode) /
+                         sizeof(StringToInt),
+                     elements.op, &opcode)) {
+        if (elements.arg1[0] == '\0' || elements.arg2[0] == '\0' ||
+            elements.arg2[0] == '\0') {
             printf("Not all needed args for arithmetic operations");
             return invalid_res;
         }
@@ -122,7 +131,9 @@ Instruction build_one_binary_instruction(const char *line) {
         res.regB = get_reg_number(elements.arg2);
 
         if (is_immediate(elements.arg3)) {
-            opcode++; // This is a nice trick, becuase my arithmetic ops are always defined in number as _src then _imm
+            // This is a nice trick, becuase my arithmetic ops are always
+            // defined in number as _src then _imm
+            opcode++;
             res.val = atoi(elements.arg3);// TODO: bounds check, own func...
         } else {
             res.regC = get_reg_number(elements.arg3);
@@ -131,12 +142,15 @@ Instruction build_one_binary_instruction(const char *line) {
 
         return res;
 
-    } else if (lookup_value(direct_opcodes, sizeof(direct_opcodes) / sizeof(StringToInt), elements.op, &opcode)) {
+    } else if (lookup_value(direct_opcodes,
+                            sizeof(direct_opcodes) / sizeof(StringToInt),
+                            elements.op, &opcode)) {
         res.opcode = opcode;
         // these are largely all special?
         return res;
         
-    } else if (lookup_value(mov, sizeof(mov) / sizeof(StringToInt), elements.op, &opcode)) {
+    } else if (lookup_value(mov, sizeof(mov) / sizeof(StringToInt),
+                            elements.op, &opcode)) {
         if (elements.arg1[0] == '\0' || elements.arg2[0] == '\0') {
             printf("Not all needed args for mov");
             return invalid_res;
@@ -145,9 +159,13 @@ Instruction build_one_binary_instruction(const char *line) {
         res.regA = get_reg_number(elements.arg1);
 
         if (is_immediate(elements.arg2)) {
-            opcode++; // This is a nice trick, becuase my arithmetic ops are always defined in number as _src then _imm
-            // TODO: either add mov HI, or split it in a few chunks. Right now just MOV_LO
-            // TODO: This is one of the small changes I make between human readable asm and about to go to binary
+            // This is a nice trick, becuase my arithmetic ops are always
+            // defined in number as _src then _imm
+            opcode++;
+            // TODO: either add mov HI, or split it in a few chunks. Right now
+            // just MOV_LO
+            // TODO: This is one of the small changes I make between human
+            // readable asm and about to go to binary
             res.val = atoi(elements.arg2);// TODO: bounds check, own func...
         } else {
             res.regB = get_reg_number(elements.arg2);
@@ -155,7 +173,8 @@ Instruction build_one_binary_instruction(const char *line) {
         res.opcode = opcode;
         
         return res;
-    } else if (lookup_value(cmp, sizeof(cmp) / sizeof(StringToInt), elements.op, &opcode)) {
+    } else if (lookup_value(cmp, sizeof(cmp) / sizeof(StringToInt),
+                            elements.op, &opcode)) {
         if (elements.arg1[0] == '\0' || elements.arg2[0] == '\0') {
             printf("Not all needed args for cmp");
             return invalid_res;
@@ -164,7 +183,9 @@ Instruction build_one_binary_instruction(const char *line) {
         res.regA = get_reg_number(elements.arg1);
 
         if (is_immediate(elements.arg2)) {
-            opcode++; // This is a nice trick, becuase my arithmetic ops are always defined in number as _src then _imm
+            // This is a nice trick, becuase my arithmetic ops are always
+            // defined in number as _src then _imm
+            opcode++;
             res.val = atoi(elements.arg2);// TODO: bounds check, own func...
         } else {
             res.regB = get_reg_number(elements.arg2);
@@ -178,7 +199,9 @@ Instruction build_one_binary_instruction(const char *line) {
 }
 
 void print_instruction(Instruction sample) {
-    printf("opcode: 0x%02x, A: 0x%02x, B: 0x%02x, C: 0x%02x, Val: 0x%08x\n", sample.opcode, sample.regA, sample.regB, sample.regC, sample.val);
+    printf("opcode: 0x%02x, A: 0x%02x, B: 0x%02x, C: 0x%02x, "
+           "Val: 0x%08x\n",
+           sample.opcode, sample.regA, sample.regB, sample.regC, sample.val);
 }
 
 #ifdef __cplusplus

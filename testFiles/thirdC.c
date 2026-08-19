@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdint.h>
 
-// as my compiler doesn't do anything with macros -> this is the way to print variables
+// as my compiler doesn't do anything with macros -> this is the way to print
+// variables
 #define print_int(a) printf("%ld", (a))
 // Try a global
 

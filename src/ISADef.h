@@ -59,7 +59,8 @@ typedef union InstructionBits {
 
 static_assert(OPCODE_COUNT < 256, "Too many opcodes, won't fit in one byte");
 static_assert(sizeof(Instruction) == 8, "Instruction struct must be 8 bytes");
-static_assert(sizeof(InstructionBits) == 8, "InstructionBits union must be 8 bytes");
+static_assert(sizeof(InstructionBits) == 8,
+              "InstructionBits union must be 8 bytes");
 
 
 

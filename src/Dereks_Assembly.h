@@ -1,4 +1,5 @@
-// If you are exploring, this is the place to start, this is what you can use to write your .dasm programs
+// If you are exploring, this is the place to start, this is what you can use
+// to write your .dasm programs
 #ifndef DEREKS_ASSEMBLY_H
 #define DEREKS_ASSEMBLY_H
 #include "Assembler.h"
@@ -31,18 +32,22 @@ StringToInt direct_opcodes[] = {
     {"store",   STORE},
     {"b",       B},
     {"beq",     BEQ},
-    {"bneq",    BNEQ},// TODO: I think I want to get rid of this, I'm keeping it streamlined
+    {"bneq",    BNEQ},// TODO: I think I want to get rid of this, I'm keeping
+                      // it streamlined
 };
 
-/* All instructions after this are really multiple opcodes, I'll call them variations
- *    For example, you can move an immediate value into some destination register, or
- *    you can move some the contents of some other register into the destination register
+/* All instructions after this are really multiple opcodes, I'll call them
+ * variations
+ *    For example, you can move an immediate value into some destination
+ *    register, or you can move some the contents of some other register into
+ *    the destination register
  *
  * Variations opcode numbers will always start with src, then immediate
  */
 StringToInt mov[] = {
     {"mov",     MOV_REG},
-    // Mov has 3 variations, src -> dst, immediate to lowhalf of dst or highhalf of dst
+    // Mov has 3 variations, src -> dst, immediate to lowhalf of dst or
+    // highhalf of dst
 };
 
 StringToInt cmp[] = {

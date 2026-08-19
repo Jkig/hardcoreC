@@ -26,7 +26,9 @@ typedef enum {
     REG_PC,
     REG_SP,
     REG_STATUS,
-    GP_REGISTERS_OFFSET// General purpose arrays will be in an array here, going from [gp0, gp<GENERAL_PURPOSE_REGISTER_COUNT-1>] inclusive  
+    // General purpose arrays will be in an array here, going from [gp0,
+    // gp<GENERAL_PURPOSE_REGISTER_COUNT-1>] inclusive
+    GP_REGISTERS_OFFSET
 } RegisterId;
 
 #define LAST_REGISTER_BEFORE_GP (GP_REGISTERS_OFFSET - 1)
@@ -55,7 +57,8 @@ typedef enum {
 // some interrupts will be used for certain puprposes commonly
 
 // TODO: Same for function stuff
-// put as much on the stack as I can?? maybe everything except the first number, which is the count of params?
+// put as much on the stack as I can?? maybe everything except the first
+// number, which is the count of params?
 
 
 typedef enum {

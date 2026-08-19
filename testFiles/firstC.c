@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdint.h>
 
-// This is the starting point, but I'll build on this as time goes on, trying a global, trying an array, trying an else if
+// This is the starting point, but I'll build on this as time goes on, trying a
+// global, trying an array, trying an else if
 
 
 
