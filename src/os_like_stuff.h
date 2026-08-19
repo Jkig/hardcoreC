@@ -4,6 +4,6 @@
 
 #include <stdint.h>
 
-void interrupt(uint8_t);
+void interrupt(uint8_t interrupt_no);
 
 #endif // OS_LIKE_STUFF_H

@@ -21,6 +21,6 @@ typedef struct {
   char arg4[MAX_TOKEN];
 } InstructionStrings;
 
-void assemble(const char *, const char *);
+void assemble(const char *input_file, const char *output_file);
 
 #endif // ASSEMBLER_H
